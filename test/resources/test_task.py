@@ -17,6 +17,7 @@ class TaskTests(unittest.TestCase):
 
     @mock.patch("usquam.resources.task.blueprint.TaskService")
     def test_get(self, mock_service):
+        "GET /tasks/:id should return 200 and a task"
         mock_service.get.return_value = {"id": 1}
 
         result = self.app.get('/tasks/0')
@@ -26,6 +27,7 @@ class TaskTests(unittest.TestCase):
 
     @mock.patch("usquam.resources.task.blueprint.TaskService")
     def test_get_empty(self, mock_service):
+        "GET /tasks/:id should return 404 when no tasks are there"
         mock_service.get.return_value = None
 
         result = self.app.get('/tasks/0')
@@ -36,6 +38,7 @@ class TaskTests(unittest.TestCase):
 
     @mock.patch("usquam.resources.task.blueprint.TaskService")
     def test_post(self, mock_service):
+        "POST /tasks should call the insert method of the service with data and return 200"
         result = self.app.post('/tasks', 
             data=json.dumps(dict({'id': 2})),
             content_type='application/json')
@@ -45,6 +48,7 @@ class TaskTests(unittest.TestCase):
 
     @mock.patch("usquam.resources.task.blueprint.TaskService")
     def test_post_empty(self, mock_service):
+        "POST /tasks should call the insert method of the service without data and return 404"
         mock_service.insert.return_value = False
         result = self.app.post('/tasks')
         
