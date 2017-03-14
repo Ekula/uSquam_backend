@@ -1,8 +1,13 @@
 from flask import Flask
-from usquam.resources.register import api_bp
+from resources.register import api_bp
+from utils.bots.bot_telegram import updater
+from multiprocessing import Process, Manager
+from time import sleep
 
 app = Flask(__name__)
 app.register_blueprint(api_bp)
 
 if __name__=="__main__":
-    app.run(debug=True)
+    updater.start_polling()
+    app.run()
+    updater.stop()

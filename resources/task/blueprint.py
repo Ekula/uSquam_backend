@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import request
-from usquam.resources.task.service import TaskService
+from service import TaskService
 
 class Task(Resource):
     def get(self, id):
