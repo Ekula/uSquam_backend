@@ -1,4 +1,4 @@
-
+from task_model import Task
 
 class Service:
     TASKS = [
@@ -23,7 +23,10 @@ class Service:
         else:
             return None
     
-    def insert(self, task):
+    def insert(self, in_task):
+        task = Task()
+        task.name = in_task['name']
+        task.save()
         if not task:
             return False
         self.TASKS.append(task)

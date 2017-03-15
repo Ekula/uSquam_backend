@@ -1,4 +1,5 @@
 from flask import Flask
+import utils.database 
 from resources.register import api_bp
 from utils.bots.bot_telegram import updater
 from multiprocessing import Process, Manager
