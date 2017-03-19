@@ -1,2 +1,6 @@
 Flask==0.12
+flask_restful
 requests
+green 
+mongoengine
+python-telegram-bot

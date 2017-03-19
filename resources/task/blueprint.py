@@ -1,12 +1,12 @@
 from flask_restful import Resource
-from flask import request
-from usquam.resources.task.service import TaskService
+from flask import request, jsonify
+from service import TaskService
 
 class Task(Resource):
     def get(self, id):
         task = TaskService.get(id)
         if task:
-            return task
+            return jsonify(task)
         else:
             return None, 404
 
