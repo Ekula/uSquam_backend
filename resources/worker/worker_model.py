@@ -1,5 +1,5 @@
 from mongoengine import Document, EmbeddedDocument, StringField, ListField, ReferenceField, BooleanField, FloatField, \
-    IntField, CASCADE
+    IntField, EmailField, CASCADE
 
 class WorkerProperties(EmbeddedDocument):
     age                 = IntField()
@@ -16,7 +16,7 @@ class WorkerProperties(EmbeddedDocument):
 class Worker(Document):
     username            = StringField(required=True, max_length=30) # Todo: List of usernames for all services
     reputation          = FloatField(default=1)
-    email               = StringField()
+    email               = EmailField()
     credits             = FloatField(default=0)
     properties          = EmbeddedDocument(WorkerProperties, reverse_delete_rule=CASCADE)
     # answers = ...

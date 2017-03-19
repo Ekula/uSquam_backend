@@ -14,6 +14,7 @@ ANSWER_TYPE = [
     # Money, specific set of choices, etc.
 ]
 
+
 class Question(EmbeddedDocument):
     data_id             = ReferenceField('resources.data.data_model.Data', required=True)
     message             = StringField(required=True) # Todo: Should also be able to include images
@@ -23,6 +24,7 @@ class Question(EmbeddedDocument):
 
 class Task(Document):
     name                = StringField(required=True, max_length=30)
+    requester_id        = ObjectIdField(required=True)
     questions           = EmbeddedDocumentListField(Question, reverse_delete_rule=CASCADE)
     time_indication     = FloatField(required=True)
     reward              = FloatField(required=True)
@@ -31,5 +33,3 @@ class Task(Document):
     # minimum and maximum amount of answers wanted
     # deadline time
     # worker_criteria   = StringField() # Age group, job title, location, ...
-
-

@@ -1,7 +1,7 @@
-from mongoengine import Document, StringField, ListField, ReferenceField, BooleanField, IntField, DateTimeField
+from mongoengine import Document, StringField, ListField, ObjectIdField, BooleanField, IntField, DateTimeField
 
 
 class Data(Document):
     name                = StringField(required=True, max_length=30)
-    requester_id        = ReferenceField('resources.requester.requester_model.Requester', required=True)
-    entries             = ListField(StringField)
+    requester_id        = ObjectIdField(required=True)
+    entries             = ListField(StringField())

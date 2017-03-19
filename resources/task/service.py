@@ -9,8 +9,11 @@ class Service:
     
     def insert(self, in_task):
         task = Task()
-        task.name = in_task['name']
+        var_names = dir(task)
+        for key in in_task:
+            if key in var_names:
+                task[key] = in_task[key]
         task.save()
-        return True
+        return task
 
 TaskService = Service()

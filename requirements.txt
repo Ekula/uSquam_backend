@@ -4,3 +4,4 @@ requests
 green
 mongoengine
 python-telegram-bot
+flask-bcrypt

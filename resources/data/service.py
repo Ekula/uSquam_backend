@@ -1,5 +1,6 @@
 from data_model import Data
 
+
 class Service:
     def getAll(self):
         return Data.objects
@@ -9,8 +10,14 @@ class Service:
     
     def insert(self, in_data):
         data = Data()
-        data.name = in_data['name']
+        var_names = dir(data)
+        for key in in_data:
+            if key in var_names:
+                data[key] = in_data[key]
         data.save()
-        return True
+        return data
 
-TaskService = Service()
+    def findWhere(self, **kwargs):
+        return Data.objects(**kwargs)
+
+DataService = Service()

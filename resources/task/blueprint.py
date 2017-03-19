@@ -14,7 +14,9 @@ class Task(Resource):
 
 class TaskList(Resource):
     def post(self):
-        if TaskService.insert(request.get_json()):
+        json_data = request.get_json(force=True)
+        task = TaskService.insert(json_data)
+        if task:
             return None, 200
         else: 
             return None, 404
