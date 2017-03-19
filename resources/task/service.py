@@ -1,4 +1,4 @@
-from task_model import Task
+from task_model import *
 
 class Service:
     def getAll(self):
