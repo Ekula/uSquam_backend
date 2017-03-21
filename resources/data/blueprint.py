@@ -17,4 +17,8 @@ class Data(Resource):
         data = DataService.insert(json_data)
         return jsonify(data)
 
-    # Todo: Patch/put to insert/remove data entries
+
+class DataEntries(Resource):
+    def get(self, r_id, d_id, id):
+        data = DataService.get(id)
+        return jsonify(data)

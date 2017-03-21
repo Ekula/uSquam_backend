@@ -4,9 +4,9 @@ import datetime
 
 
 SESSION_STATUS = [
-    'ACTIVE'
-    'ON_HOLD'
-    'STOPPED'
+    'ACTIVE',
+    'ON_HOLD',
+    'STOPPED',
     'DONE'
 ]
 

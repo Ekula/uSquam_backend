@@ -1,6 +1,7 @@
 from mongoengine import Document, EmbeddedDocument, StringField, ListField, ReferenceField, BooleanField, FloatField, \
     IntField, EmailField, CASCADE
 
+
 class WorkerProperties(EmbeddedDocument):
     age                 = IntField()
     sex                 = StringField()

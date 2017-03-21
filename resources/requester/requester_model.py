@@ -5,3 +5,4 @@ class Requester(Document):
     password        = StringField(required=True)
     email           = EmailField(required=True)
     credits         = FloatField(default=0) # Todo: Not modifiable by owner
+

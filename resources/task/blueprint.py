@@ -4,6 +4,13 @@ from service import *
 
 
 class Task(Resource):
+    def get(self):
+        task = TaskService.getAll()
+        if task:
+            return jsonify(task)
+        else:
+            return None, 404
+
     def get(self, id):
         task = TaskService.get(id)
         if task:
@@ -11,12 +18,10 @@ class Task(Resource):
         else:
             return None, 404
 
-
-class TaskList(Resource):
     def post(self):
         json_data = request.get_json(force=True)
         task = TaskService.insert(json_data)
         if task:
             return None, 200
-        else: 
+        else:
             return None, 404
