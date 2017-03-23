@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, ListField, ReferenceField, EmbeddedDocument, EmbeddedDocumentListField,\
-    BooleanField, IntField, DateTimeField
+    BooleanField, IntField, DateTimeField, ObjectIdField
 import datetime
 
 
@@ -18,11 +18,8 @@ class Answer(EmbeddedDocument):
 
 
 class Session(Document):
-    task_id             = ReferenceField('resources.task.task_model.Task', required=True)
-    worker_id           = ReferenceField('resources.worker.worker_model.Worker', required=True)
+    task_id             = ObjectIdField(required=True)
+    worker_id           = ObjectIdField(required=True)
     state               = IntField(default=0)
-    answers             = EmbeddedDocumentListField(Answer)
-    status              = StringField(required=True, choices=SESSION_STATUS)
-
-
-
+    # answers             = EmbeddedDocumentListField(Answer)
+    status              = StringField(default='ACTIVE', choices=SESSION_STATUS)

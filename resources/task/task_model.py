@@ -17,7 +17,7 @@ ANSWER_TYPE = [
 
 
 class Question(EmbeddedDocument):
-    data_id             = ObjectIdField(required=True)
+    # data_id             = ObjectIdField(required=True)
     message             = StringField(required=True) # Todo: Should also be able to include images
     expected_type       = StringField(choices=ANSWER_TYPE)
     suggestions         = ListField(StringField())

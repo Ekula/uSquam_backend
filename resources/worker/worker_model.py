@@ -1,4 +1,4 @@
-from mongoengine import Document, EmbeddedDocument, StringField, ListField, ReferenceField, BooleanField, FloatField, \
+from mongoengine import Document, EmbeddedDocument, EmbeddedDocumentField, StringField, ListField, ReferenceField, BooleanField, FloatField, \
     IntField, EmailField, CASCADE
 
 
@@ -15,9 +15,9 @@ class WorkerProperties(EmbeddedDocument):
 
 
 class Worker(Document):
-    username            = StringField(required=True, max_length=30) # Todo: List of usernames for all services
+    username            = StringField(required=True, unique=True, max_length=30) # Todo: List of usernames for all services
     reputation          = FloatField(default=1)
     email               = EmailField()
     credits             = FloatField(default=0)
-    properties          = EmbeddedDocument(WorkerProperties, reverse_delete_rule=CASCADE)
+    properties          = EmbeddedDocumentField(WorkerProperties)
     # answers = ...

@@ -1,24 +1,23 @@
+from session_interaction_handler import SessionInteractionHandler
+from idle_interaction_handler import IdleInteractionHandler
+from resources.session.service import SessionService
+from resources.worker.service import WorkerService
 
-RULES = {
-    "Hello": "What's up"
-}
+class _InteractionRedirector:
 
-class InteractionRedirector:
-
-    def __init__(self):
-
-        self.sessions = {}
+    def populateWorker(self, user_id):
+        worker = WorkerService.findWhere(username=str(user_id)).first()
+        if worker:
+            return worker
+        worker = WorkerService.insert({'username': str(user_id)})
+        return worker
 
     def onInput(self, user_id, message):
-        if (user_id in self.sessions.keys()):
-            return self.handleSessionInput(self.sessions[user_id], message)
+        worker = self.populateWorker(user_id)
+        active_session = SessionService.findWhere(worker_id=worker['id'], status='ACTIVE').first()
+        if active_session:
+            return SessionInteractionHandler.handleInput(active_session, message)
         else:
-            return self.handleIdleInput(message)
+            return IdleInteractionHandler.handleInput(worker, message)
 
-    def handleIdleInput(self, message):
-
-        if (message in RULES.keys()):
-            return RULES[message]
-        
-    def handleSesssionInput(self, session, message):
-        return "Done"
+InteractionRedirector = _InteractionRedirector()
