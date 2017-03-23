@@ -1,4 +1,6 @@
-
+from resources.task.service import TaskService
+from resources.session.service import SessionService
+from resources.session.session_model import Answer
 
 class _SessionInteractionHandler:
 
@@ -13,32 +15,36 @@ class _SessionInteractionHandler:
         return decorator
 
     def handleInput(self, session, message):
-        return "Handling session"
-        # handle_function = self.handlers.get(message)
-        # if handle_function:
-        #     return handle_function(user_id, message)
-        # else:
-        #     return "Sorry, I don't know what to say."
+        handle_function = self.handlers.get(message)
+        if handle_function:
+            return handle_function(session, message)
+        else:
+            handle_function = self.handlers.get('*')
+            return handle_function(session, message)
 
 SessionInteractionHandler = _SessionInteractionHandler()
 
-@SessionInteractionHandler.interaction("start")
-def start(user_id, message):
-    return """Hey what would you like to do?
-    
-    Just type \task to get a new task!
-    """
+@SessionInteractionHandler.interaction("*")
+def newTask(session, message):
+    task = TaskService.get(session['task_id'])
+    state = session['state']
 
-@SessionInteractionHandler.interaction("task")
-def newTask(worker, message):
-    print message
-    tasks = TaskService.getAll()
-    task = tasks[0]
-    newSession = {
-        'worker_id': worker['id'],
-        'task_id': task['id']
-    }
-    session = SessionService.insert(newSession)
-    return '{}'.format(task['questions'][0]['message'])
+    answer = Answer()
+    answer.message = message
+    session.answers.append(answer)
+
+    answer = ''
+    if state + 1 < len(task['questions']):
+        state += 1
+        answer = task['questions'][state]['message']
+        session.state = state
+        
+    else:
+        answer = "Thank you for completing the task"
+        session.status = "DONE"
+    
+    SessionService.update(session)
+    
+    return answer
 
 

@@ -14,6 +14,9 @@ class Service:
         session.save()
         return session
 
+    def update(self, session):
+        session.save()
+
     def findWhere(self, **kwargs):
 
         return Session.objects(**kwargs)
