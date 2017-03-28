@@ -21,4 +21,9 @@ class Service:
 
         return requester
 
+    def patch(self, id, field, value):
+        requester = Requester.objects.get(id=id)
+        requester[field] = value;
+        requester.save()
+
 RequesterService = Service()

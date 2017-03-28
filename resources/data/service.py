@@ -1,12 +1,12 @@
-from data_model import Data, DataEntry
+from data_model import Data, DataItem
 
 
 class Service:
-    def getAll(self):
-        return Data.objects
-    
-    def get(self, id):
-        return Data.objects.get(id=id)
+    def get(self, r_id, id=None):
+        if id is None:
+            return Data.objects
+        else:
+            return Data.objects.get(id=id)
     
     def insert(self, in_data):
         data = Data()
@@ -16,19 +16,27 @@ class Service:
         data.requester_id = in_data['requester_id']
 
         for item in in_data['items']:
-            entry = DataEntry()
+            entry = DataItem()
             entry['content'] = item['content']
             data['items'].append(entry)
 
-
-        # var_names = dir(data)
-        # for key in in_data:
-        #     if key in var_names:
-        #         data[key] = in_data[key]
         data.save()
         return data
 
     def findWhere(self, **kwargs):
         return Data.objects(**kwargs)
+
+    def update(self, in_data):
+        data = Data.objects.get(id=in_data['id'])
+        data.name = in_data['name']
+        data.requester_id = in_data['requester_id']
+
+        for item in in_data['items']:
+            entry = DataItem()
+            entry['content'] = item['content']
+            data['items'].append(entry)
+
+        data.save()
+        return data
 
 DataService = Service()
