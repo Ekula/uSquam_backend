@@ -1,4 +1,4 @@
-from task_model import *
+from task_model import Task, Question
 
 class Service:
     def getAll(self):
@@ -14,14 +14,17 @@ class Service:
         task.requester_id = in_task['requester_id']
         task.time_indication = in_task['time_indication']
         task.reward = in_task['reward']
-        task.active = in_task['active']
+        if 'active' in in_task:
+            task.active = in_task['active']
 
         for item in in_task['questions']:
             question = Question()
-            question.data_id = item['data_id']
+            # question.data_id = item['data_id']
             question.message = item['message']
-            question.expected_type = item['expected_type']
-            question.suggestions = item['suggestions']
+            if 'expected_type' in item:
+                question.expected_type = item['expected_type']
+            if 'suggestions' in item:
+                question.suggestions = item['suggestions']
             task.questions.append(question)
         task.save()
         return task

@@ -1,5 +1,5 @@
 from mongoengine import Document, EmbeddedDocument, EmbeddedDocumentListField, StringField, ListField, ReferenceField, \
-    BooleanField, FloatField,  DateTimeField, ObjectIdField, CASCADE
+    BooleanField, FloatField,  DateTimeField, ObjectIdField, CASCADE, IntField
 import datetime
 
 ANSWER_TYPE = [
@@ -18,9 +18,10 @@ ANSWER_TYPE = [
 
 class Question(EmbeddedDocument):
     data_id             = ObjectIdField(required=True)
-    message             = StringField(required=True) # Todo: Should also be able to include images
+    message             = StringField(required=True)
     expected_type       = StringField(choices=ANSWER_TYPE)
     suggestions         = ListField(StringField())
+    question_data_idx   = IntField()
 
 
 class Task(Document):
@@ -31,3 +32,4 @@ class Task(Document):
     reward              = FloatField(required=True)
     active              = BooleanField(default=False)
     date_modified       = DateTimeField(default=datetime.datetime.now)
+    task_data_id        = ObjectIdField(required=True)

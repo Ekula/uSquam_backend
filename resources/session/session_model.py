@@ -1,6 +1,7 @@
 from mongoengine import Document, StringField, ListField, ReferenceField, EmbeddedDocument, EmbeddedDocumentListField,\
-    BooleanField, IntField, DateTimeField
+    BooleanField, IntField, DateTimeField, ObjectIdField
 import datetime
+from bson.objectid import ObjectId
 
 
 SESSION_STATUS = [
@@ -12,17 +13,14 @@ SESSION_STATUS = [
 
 
 class Answer(EmbeddedDocument):
+    _id                 = ObjectIdField( required=True, default=lambda: ObjectId() )
     message             = StringField(required=True)
     timestamp           = DateTimeField(default=datetime.datetime.now())
-    question            = ReferenceField('resources.task.task_model.Question')
-
+    question            = ObjectIdField(required=True)
 
 class Session(Document):
-    task_id             = ReferenceField('resources.task.task_model.Task', required=True)
-    worker_id           = ReferenceField('resources.worker.worker_model.Worker', required=True)
+    task_id             = ObjectIdField(required=True)
+    worker_id           = ObjectIdField(required=True)
     state               = IntField(default=0)
     answers             = EmbeddedDocumentListField(Answer)
-    status              = StringField(required=True, choices=SESSION_STATUS)
-
-
-
+    status              = StringField(default='ACTIVE', choices=SESSION_STATUS)

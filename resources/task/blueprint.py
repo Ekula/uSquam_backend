@@ -4,15 +4,17 @@ from service import *
 
 
 class Task(Resource):
-    def get(self):
-        task = TaskService.getAll()
-        if task:
-            return jsonify(task)
-        else:
-            return None, 404
 
-    def get(self, id):
-        task = TaskService.get(id)
+    def get(self, id=None):
+        """
+        If no ID is specified, return all tasks
+        :param id:
+        :return:
+        """
+        if id is None:
+            task = TaskService.getAll()
+        else:
+            task = TaskService.get(id)
         if task:
             return jsonify(task)
         else:

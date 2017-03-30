@@ -1,7 +1,7 @@
 from flask import Flask
 import utils.database 
 from resources.register import api_bp
-from src.bots.bot_telegram import updater
+from src.bots.bot_telegram import start_telegram_bot
 from multiprocessing import Process, Manager
 from utils.mongoengine_jsonencoder import MongoEngineJSONEncoder
 from time import sleep
@@ -22,6 +22,7 @@ def index():
     return jsonify({'status': 200, 'success':True})
 
 if __name__ == "__main__":
+    updater = start_telegram_bot()
     updater.start_polling()
     app.run(debug=parser.parse_args().debug,use_reloader=parser.parse_args().debug)
     updater.stop()
