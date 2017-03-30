@@ -3,13 +3,16 @@ from flask import request, jsonify
 from service import DataService
 
 class Data(Resource):
-    def get(self, r_id, id):
-        data = DataService.get(id)
-        return jsonify(data)
+    def get(self, r_id, id=None):
+        if id is None:
+            data = DataService.findWhere(requester_id=r_id)
+            return jsonify(data)
 
-    def get(self, r_id):
-        data = DataService.findWhere(requester_id=r_id)
-        return jsonify(data)
+        data = DataService.get(r_id, id)
+        print data.requester_id, r_id
+        if str(data.requester_id) == r_id:
+            return jsonify(data)
+        return 403
 
     def post(self, r_id):
         json_data = request.get_json(force=True)
@@ -17,8 +20,20 @@ class Data(Resource):
         data = DataService.insert(json_data)
         return jsonify(data)
 
+    def put(self, r_id):
+        json_data = request.get_json(force=True)
+        if json_data['id'] is not None:
+            return jsonify(DataService.update(json_data))
+        return 500
 
-class DataEntries(Resource):
+
+class DataItem(Resource):
     def get(self, r_id, d_id, id):
-        data = DataService.get(id)
-        return jsonify(data)
+        data = DataService.findWhere(requester_id=r_id, id=d_id)
+        for i in range(len(data)):
+            for j in range(len(data[i].items)):
+                if str(data[i].items[j]._id) == id:
+                    return jsonify(data[i].items[j])
+        return 404
+
+

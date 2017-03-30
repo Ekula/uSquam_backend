@@ -31,6 +31,7 @@ def newTask(session, message):
 
     answer = Answer()
     answer.message = message
+    answer.question = task['questions'][state]['_id']
     session.answers.append(answer)
 
     answer = ''

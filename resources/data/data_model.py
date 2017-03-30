@@ -2,15 +2,26 @@ from mongoengine import Document, EmbeddedDocument, StringField, ObjectIdField, 
 from bson.objectid import ObjectId
 
 
-class DataEntry(EmbeddedDocument):
-    _id                 = ObjectIdField( required=True, default=lambda: ObjectId())
+DATA_TYPE = [
+    'TEXT',
+    'IMAGE',
+    'URL'
+]
+
+class QuestionData(EmbeddedDocument):
+    type                = StringField(choices=DATA_TYPE,required=True)
     content             = StringField(required=True)
 
 
-class Data(Document):
+class TaskData(EmbeddedDocument):
+    _id                 = ObjectIdField( required=True, default=lambda: ObjectId())
+    content             = EmbeddedDocumentListField(QuestionData)
+
+
+class DataCollection(Document):
     name                = StringField(required=True, max_length=30)
     requester_id        = ObjectIdField(required=True)
-    items               = EmbeddedDocumentListField(DataEntry)
+    items               = EmbeddedDocumentListField(TaskData)
 
 
 

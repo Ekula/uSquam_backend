@@ -1,6 +1,7 @@
 from mongoengine import Document, StringField, ListField, ReferenceField, EmbeddedDocument, EmbeddedDocumentListField,\
     BooleanField, IntField, DateTimeField, ObjectIdField
 import datetime
+from bson.objectid import ObjectId
 
 
 SESSION_STATUS = [
@@ -12,10 +13,10 @@ SESSION_STATUS = [
 
 
 class Answer(EmbeddedDocument):
+    _id                 = ObjectIdField( required=True, default=lambda: ObjectId() )
     message             = StringField(required=True)
     timestamp           = DateTimeField(default=datetime.datetime.now())
-    # question            = ReferenceField('resources.task.task_model.Question')
-
+    question            = ObjectIdField(required=True)
 
 class Session(Document):
     task_id             = ObjectIdField(required=True)
