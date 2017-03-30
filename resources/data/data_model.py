@@ -15,7 +15,7 @@ class QuestionData(EmbeddedDocument):
 
 class TaskData(EmbeddedDocument):
     _id                 = ObjectIdField( required=True, default=lambda: ObjectId())
-    content             = EmbeddedDocumentListField(QuestionData)
+    items               = EmbeddedDocumentListField(QuestionData)
 
 
 class DataCollection(Document):

@@ -10,15 +10,17 @@ class Service:
     
     def insert(self, in_data):
         data = DataCollection()
-
-        print in_data
         data.name = in_data['name']
         data.requester_id = in_data['requester_id']
 
         for item in in_data['items']:
             entry = TaskData()
-            entry['content'] = item['content']
-            data['items'].append(entry)
+            for q_item in item['items']:
+                q_data = QuestionData()
+                q_data.content = q_item['content']
+                q_data.type = q_item['type']
+                entry.items.append(q_data)
+            data.items.append(entry)
 
         data.save()
         return data
@@ -33,8 +35,12 @@ class Service:
 
         for item in in_data['items']:
             entry = TaskData()
-            entry['content'] = item['content']
-            data['items'].append(entry)
+            for q_item in item['items']:
+                q_data = QuestionData()
+                q_data.content = q_item['content']
+                q_data.type = q_item['type']
+                entry.items.append(q_data)
+            data.items.append(entry)
 
         data.save()
         return data
