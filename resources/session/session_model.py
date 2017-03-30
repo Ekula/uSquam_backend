@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, ListField, ReferenceField, EmbeddedDocument, EmbeddedDocumentListField,\
-    BooleanField, IntField, DateTimeField
+    BooleanField, IntField, DateTimeField, ObjectIdField
 import datetime
 
 
@@ -14,7 +14,7 @@ SESSION_STATUS = [
 class Answer(EmbeddedDocument):
     message             = StringField(required=True)
     timestamp           = DateTimeField(default=datetime.datetime.now())
-    question            = ReferenceField('resources.task.task_model.Question')
+    question            = ObjectIdField(required=True)
 
 
 class Session(Document):
