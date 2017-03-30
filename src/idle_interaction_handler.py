@@ -61,7 +61,7 @@ def newTask(worker, message):
             break
 
     # There could be no data item specified for this question
-    if task_data is not None:
+    if 'question_data_idx' in task['questions'][0]:
         # Choose first question data item from the list
         question_data = task_data.question_data[task['questions'][0]['question_data_idx']].content
         answer = '{}\n  {}'.format(question, question_data)
