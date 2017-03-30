@@ -17,6 +17,7 @@ app.bcrypt = Bcrypt(app)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--debug', action='store_true')
+parser.add_argument('--deploy', action='store_true')
 
 @app.route('/')
 def index():
@@ -27,5 +28,14 @@ if __name__ == "__main__":
     if 'WERKZEUG_RUN_MAIN' in os.environ:
         updater = start_telegram_bot()
         updater.start_polling()
-    app.run(debug=parser.parse_args().debug,use_reloader=parser.parse_args().debug)
-    updater.stop()
+
+    debugMode = parser.parse_args().debug
+    deployMode = parser.parse_args().deploy
+
+    if deployMode:
+        app.run(host='0.0.0.0', debug=debugMode, use_reloader=debugMode)
+    else:
+        app.run(debug=debugMode, use_reloader=debugMode)
+
+    if updater is not None:
+        updater.stop()

@@ -31,9 +31,9 @@ class DataItem(Resource):
     def get(self, r_id, d_id, id):
         data = DataService.findWhere(requester_id=r_id, id=d_id)
         for i in range(len(data)):
-            for j in range(len(data[i].items)):
-                if str(data[i].items[j]._id) == id:
-                    return jsonify(data[i].items[j])
+            for j in range(len(data[i].task_data)):
+                if str(data[i].task_data[j]._id) == id:
+                    return jsonify(data[i].task_data[j])
         return 404
 
 

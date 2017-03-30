@@ -22,8 +22,8 @@ class Service:
                 q_data = QuestionData()
                 q_data.content = q_item['content']
                 q_data.type = q_item['type']
-                entry.items.append(q_data)
-            data.items.append(entry)
+                entry.question_data.append(q_data)
+            data.task_data.append(entry)
 
         data.save()
         return data
@@ -42,8 +42,8 @@ class Service:
                 q_data = QuestionData()
                 q_data.content = q_item['content']
                 q_data.type = q_item['type']
-                entry.items.append(q_data)
-            data.items.append(entry)
+                entry.question_data.append(q_data)
+            data.task_data.append(entry)
 
         data.save()
         return data
