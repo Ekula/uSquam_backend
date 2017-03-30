@@ -1,4 +1,4 @@
-from mongoengine import Document, EmbeddedDocument, StringField, ListField, ReferenceField, BooleanField, FloatField, \
+from mongoengine import Document, EmbeddedDocument, EmbeddedDocumentField, StringField, ListField, ReferenceField, BooleanField, FloatField, \
     IntField, EmailField, CASCADE
 
 
@@ -23,8 +23,8 @@ class WorkerHandles(EmbeddedDocument):
 
 
 class Worker(Document):
-    username            = EmbeddedDocument(WorkerHandles)
+    username            = EmbeddedDocumentField(WorkerHandles)
     reputation          = FloatField(default=1)
     email               = EmailField()
     credits             = FloatField(default=0)
-    properties          = EmbeddedDocument(WorkerProperties)
+    properties          = EmbeddedDocumentField(WorkerProperties)

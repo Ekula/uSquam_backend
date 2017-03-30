@@ -9,12 +9,9 @@ api = Api(api_bp)
 
 # TASKS
 api.add_resource(Task, '/tasks', '/tasks/<string:id>')
-# api.add_resource(Task, '/requesters/<string:r_id>/tasks/<string:id>')
-
 
 # REQUESTERS
 api.add_resource(Requester, '/requesters', '/requesters/<string:id>')
-
 
 # Data
 api.add_resource(Data,      '/requesters/<string:r_id>/data', '/requesters/<string:r_id>/data/<string:id>')
