@@ -20,7 +20,7 @@ class Question(EmbeddedDocument):
     message             = StringField(required=True)
     expected_type       = StringField(choices=ANSWER_TYPE)
     suggestions         = ListField(StringField())
-    question_data_idx   = IntField(default=0)
+    question_data_idx   = IntField()
 
 
 class Task(Document):

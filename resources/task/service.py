@@ -20,7 +20,8 @@ class Service:
 
         for item in in_task['questions']:
             question = Question()
-            question.question_data_idx = item['question_data_idx']
+            if 'question_data_idx' in item:
+                question.question_data_idx = item['question_data_idx']
             question.message = item['message']
             if 'expected_type' in item:
                 question.expected_type = item['expected_type']
