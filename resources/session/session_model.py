@@ -13,13 +13,15 @@ SESSION_STATUS = [
 
 
 class Answer(EmbeddedDocument):
-    _id                 = ObjectIdField( required=True, default=lambda: ObjectId() )
+    _id                 = ObjectIdField(required=True, default=lambda: ObjectId() )
     message             = StringField(required=True)
     timestamp           = DateTimeField(default=datetime.datetime.now())
-    question            = ObjectIdField(required=True)
+    #question            = ObjectIdField(required=True)
+
 
 class Session(Document):
     task_id             = ObjectIdField(required=True)
+    task_data_id        = ObjectIdField(required=True)
     worker_id           = ObjectIdField(required=True)
     state               = IntField(default=0)
     answers             = EmbeddedDocumentListField(Answer)

@@ -2,6 +2,9 @@ from data_model import DataCollection, TaskData, QuestionData
 
 
 class Service:
+    def getAll(self):
+        return DataCollection.objects
+
     def get(self, r_id, id=None):
         if id is None:
             return DataCollection.objects

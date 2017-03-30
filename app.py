@@ -8,6 +8,7 @@ from time import sleep
 from flask_bcrypt import Bcrypt
 import argparse
 from flask import jsonify
+import os
 
 app = Flask(__name__)
 app.json_encoder = MongoEngineJSONEncoder
@@ -22,7 +23,9 @@ def index():
     return jsonify({'status': 200, 'success':True})
 
 if __name__ == "__main__":
-    updater = start_telegram_bot()
-    updater.start_polling()
+    # Detect if app has restarted in debug mode - else the chat bot will try to start multiple times
+    if 'WERKZEUG_RUN_MAIN' in os.environ:
+        updater = start_telegram_bot()
+        updater.start_polling()
     app.run(debug=parser.parse_args().debug,use_reloader=parser.parse_args().debug)
     updater.stop()

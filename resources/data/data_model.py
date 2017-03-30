@@ -8,13 +8,14 @@ DATA_TYPE = [
     'URL'
 ]
 
+
 class QuestionData(EmbeddedDocument):
-    type                = StringField(choices=DATA_TYPE,required=True)
+    type                = StringField(choices=DATA_TYPE, required=True)
     content             = StringField(required=True)
 
 
 class TaskData(EmbeddedDocument):
-    _id                 = ObjectIdField( required=True, default=lambda: ObjectId())
+    _id                 = ObjectIdField(required=True, default=lambda: ObjectId())
     items               = EmbeddedDocumentListField(QuestionData)
 
 
