@@ -16,13 +16,13 @@ class QuestionData(EmbeddedDocument):
 
 class TaskData(EmbeddedDocument):
     _id                 = ObjectIdField(required=True, default=lambda: ObjectId())
-    items               = EmbeddedDocumentListField(QuestionData)
+    question_data       = EmbeddedDocumentListField(QuestionData)
 
 
 class DataCollection(Document):
     name                = StringField(required=True, max_length=30)
     requester_id        = ObjectIdField(required=True)
-    items               = EmbeddedDocumentListField(TaskData)
+    task_data           = EmbeddedDocumentListField(TaskData)
 
 
 

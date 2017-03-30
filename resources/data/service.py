@@ -16,9 +16,9 @@ class Service:
         data.name = in_data['name']
         data.requester_id = in_data['requester_id']
 
-        for item in in_data['items']:
+        for item in in_data['task_data']:
             entry = TaskData()
-            for q_item in item['items']:
+            for q_item in item['question_data']:
                 q_data = QuestionData()
                 q_data.content = q_item['content']
                 q_data.type = q_item['type']
@@ -36,9 +36,9 @@ class Service:
         data.name = in_data['name']
         data.requester_id = in_data['requester_id']
 
-        for item in in_data['items']:
+        for item in in_data['task_data']:
             entry = TaskData()
-            for q_item in item['items']:
+            for q_item in item['question_data']:
                 q_data = QuestionData()
                 q_data.content = q_item['content']
                 q_data.type = q_item['type']

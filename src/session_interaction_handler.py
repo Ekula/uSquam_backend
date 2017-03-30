@@ -39,20 +39,24 @@ def newTask(session, message):
     if state + 1 < len(task['questions']):
         state += 1
 
+        question = task['questions'][state]['message']
+
         # Todo: Create a question format function somewhere (same code in idle_interaction_handler)
         # Find question data content
         data_collection = DataService.get(None, task['data_collection_id'])
         task_data = None
-        for item in data_collection['items']:
+        for item in data_collection['task_data']:
             print item['_id'], session['task_data_id']
             if str(item['_id']) == str(session['task_data_id']):
                 task_data = item
                 break
-        question_data = task_data.items[task['questions'][state]['question_data_idx']].content
 
-        # Create response to worker answer: New question and the accompanied question data
-        question = task['questions'][state]['message']
-        answer = '{}\n  {}'.format(question, question_data)
+        # There could be no data item specified for this question
+        if task_data is not None:
+            question_data = task_data.question_data[task['questions'][state]['question_data_idx']].content
+            answer = '{}\n  {}'.format(question, question_data)
+        else:
+            answer = '{}'.format(question)
         session.state = state
         
     else:

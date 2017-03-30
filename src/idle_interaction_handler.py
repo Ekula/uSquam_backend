@@ -40,7 +40,7 @@ def newTask(worker, message):
 
     data_collection = DataService.get(None, task['data_collection_id'])
 
-    task_data = random.choice(data_collection['items'])
+    task_data = random.choice(data_collection['task_data'])
     new_session = {
         'worker_id': worker['id'],
         'task_id': task['id'],
@@ -48,19 +48,24 @@ def newTask(worker, message):
     }
     session = SessionService.insert(new_session)
 
+    question = task['questions'][0]['message']
+
     # Todo: Create a question format function somewhere (same code in session_interaction_handler)
     # Find question data content
     data_collection = DataService.get(None, task['data_collection_id'])
     task_data = None
-    for item in data_collection['items']:
+    for item in data_collection['task_data']:
         print item['_id'], session['task_data_id']
         if str(item['_id']) == str(session['task_data_id']):
             task_data = item
             break
-    question_data = task_data.items[task['questions'][0]['question_data_idx']].content
 
-    # Create response to worker answer: New question and the accompanied question data
-    question = task['questions'][0]['message']
-    answer = '{}\n  {}'.format(question, question_data)
+    # There could be no data item specified for this question
+    if task_data is not None:
+        # Choose first question data item from the list
+        question_data = task_data.question_data[task['questions'][0]['question_data_idx']].content
+        answer = '{}\n  {}'.format(question, question_data)
+    else:
+        answer = '{}'.format(question)
 
     return answer
