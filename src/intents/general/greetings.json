@@ -1,0 +1,19 @@
+{
+    "intent": "Greetings",
+    "required": [
+        {
+            "GreetingKeyword": [
+                "hi",
+                "hello",
+                "what's up",
+                "hey",
+                "hoi",
+                "ola",
+                "good day",
+                "good evening",
+                "good morning",
+                "usquam"
+            ]
+        }
+    ]
+}
