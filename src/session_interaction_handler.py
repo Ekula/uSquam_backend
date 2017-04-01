@@ -46,7 +46,6 @@ def newTask(session, message):
         data_collection = DataService.get(None, task['data_collection_id'])
         task_data = None
         for item in data_collection['task_data']:
-            print item['_id'], session['task_data_id']
             if str(item['_id']) == str(session['task_data_id']):
                 task_data = item
                 break
