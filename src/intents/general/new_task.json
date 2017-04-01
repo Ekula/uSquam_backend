@@ -1,0 +1,22 @@
+{
+    "intent": "NewTask",
+    "required": [
+        {
+            "TaskKeyword": [
+                "task",
+                "job",
+                "assignment",
+                "exercise"
+            ]
+        },
+        {
+            "TaskObtainVerb": [
+                "get",
+                "give",
+                "have",
+                "like",
+                "new"
+            ]
+        }
+    ]
+}
