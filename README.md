@@ -80,3 +80,63 @@ loaded from the database and based on the current step of the task and the input
 query should be send. This is done by the `SessionInteractionHandler` which is simply a 
 state-machine which gets the current state from the Session object and runs a specific 
 routine to determine the next state based on the message of the user.
+
+### Requester API
+The addition and management of tasks can be performed using our REST API. 
+First, a `requester` account needs to be created:
+```json
+POST to /requesters
+body: {
+    "name": "string",
+    "password": "string",
+    "email": "string"
+}
+```
+This request will yield a response containing your `requester_id`. 
+Now, before a task can be created, a `data_collection` is needed. When a worker is assigned to a task,
+  a random `task_data` item is chosen from the data collection that is specified in the task.
+  We allow multiple `question_data` items to be created in a `task_data` item, 
+  so that your task can contain questions about multiple pieces of data.
+  
+Such a data collection can be created as follows:
+```json
+POST to /requesters/<requester_id>/data
+body: {
+    "name": "string",
+    "task_data": [
+        {
+            "question_data": [
+                {
+                    "type": "TEXT/IMAGE/URL",
+                    "content":"string"
+                }
+            ]
+        }
+    ]
+}
+```
+
+This request will yield a response containing a `data_collection_id`, which needs to be added to the request
+for creating the `task` itself. Each question can contain a `question_data_idx`, 
+which refers to the index of the `question_data` item from your `data_collection`. If no index is specified,
+no data will be send along with that question. This can be useful for asking questions about the same
+piece of data.
+```json
+POST to /tasks
+body: {
+	"name": "string",
+	"requester_id": "<requester_id>",
+	"data_collection_id": "<data_collection_id>",
+	"questions": [
+		{
+			"message": "string",
+			"expected_type": "TEXT/NUMBER/DATE/...",
+			"suggestions": ["<string>"],
+			"question_data_idx": <number, optional>
+		}
+	],
+	"time_indication": <number>,
+	"reward": <number>,
+	"active": <boolean>
+}
+```

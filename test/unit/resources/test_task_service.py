@@ -19,8 +19,16 @@ class TaskServiceTest(unittest.TestCase):
     def test_insert_name_too_long(self):
         "insert should fail because the name is too long"
         name = "Hellodhsfkjahsdfljhaslkdjfhlkashdfasdhflkjahsl"
+
+        task = {
+            'name': name,
+            'requester_id': '1',
+            'time_indication': '1',
+            'reward': '1'
+        }
+
         with self.assertRaises(ValidationError) as context:
-            self.service.insert({"name": name})
+            self.service.insert(task)
 
         self.assertTrue('String value is too long' in str(context.exception))
 

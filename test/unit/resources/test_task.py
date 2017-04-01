@@ -52,5 +52,6 @@ class TaskTests(unittest.TestCase):
         mock_service.insert.return_value = False
         result = self.app.post('/tasks')
         
+        self.assertTrue(mock_service.insert.called)
         mock_service.insert.assert_called_with(None)
         self.assertEqual(result.status_code, 404)

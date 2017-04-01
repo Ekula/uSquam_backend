@@ -1,18 +1,29 @@
 from flask_restful import Resource
 from flask import request, jsonify
-from service import TaskService
+from service import *
+
 
 class Task(Resource):
-    def get(self, id):
-        task = TaskService.get(id)
+
+    def get(self, id=None):
+        """
+        If no ID is specified, return all tasks
+        :param id:
+        :return:
+        """
+        if id is None:
+            task = TaskService.getAll()
+        else:
+            task = TaskService.get(id)
         if task:
             return jsonify(task)
         else:
             return None, 404
 
-class TaskList(Resource):
     def post(self):
-        if TaskService.insert(request.get_json()):
+        json_data = request.get_json(force=True)
+        task = TaskService.insert(json_data)
+        if task:
             return None, 200
-        else: 
+        else:
             return None, 404
