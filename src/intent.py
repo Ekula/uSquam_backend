@@ -46,10 +46,15 @@ class IntentParser:
         if 'required' in data:
             for entity in data['required']:
                 for key, value in entity.iteritems():
+                    if isinstance(value, basestring):
+                        self.engine.register_regex_entity(value, domain=domain)
+                        new_intent = new_intent.require(key)
+                        continue
+                    
                     for keyword in value:
                         self.engine.register_entity(keyword, key, domain=domain)
-
-                new_intent = new_intent.require(key)
+                    
+                    new_intent = new_intent.require(key)
         
         if 'optionally' in data:
             for entity in data['optionally']:
@@ -64,18 +69,20 @@ class IntentParser:
         
         return True
 
-    def parse(self, text):
+    def parse(self, text, expected_intents=None):
         """
         Returns best match for intent.
         """
-
         for intent in self.engine.determine_intent(text):
             if intent and intent.get('confidence') > 0.0:
-                return intent
+                if expected_intents and intent.get('intent_type') in expected_intents:
+                    return intent
+                elif not expected_intents:
+                    return intent
+                else:
+                    return None
 
 
 
 if __name__ == "__main__":
     IP = IntentParser()
-    print IP.parse("Hello")
-    print IP.parse("Done")
