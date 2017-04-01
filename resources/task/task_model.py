@@ -17,7 +17,6 @@ ANSWER_TYPE = [
 
 
 class Question(EmbeddedDocument):
-    data_id             = ObjectIdField(required=True)
     message             = StringField(required=True)
     expected_type       = StringField(choices=ANSWER_TYPE)
     suggestions         = ListField(StringField())
@@ -27,9 +26,9 @@ class Question(EmbeddedDocument):
 class Task(Document):
     name                = StringField(required=True, max_length=30)
     requester_id        = ObjectIdField(required=True)
+    data_collection_id  = ObjectIdField(required=True)
     questions           = EmbeddedDocumentListField(Question)
     time_indication     = FloatField(required=True)
     reward              = FloatField(required=True)
     active              = BooleanField(default=False)
     date_modified       = DateTimeField(default=datetime.datetime.now)
-    task_data_id        = ObjectIdField(required=True)

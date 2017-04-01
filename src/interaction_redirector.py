@@ -19,6 +19,7 @@ class _InteractionRedirector:
     def onInput(self, user_id, message):
         worker = self.populateWorker(user_id)
         active_session = SessionService.findWhere(worker_id=worker['id'], status='ACTIVE').first()
+
         if active_session:
             return SessionInteractionHandler.handleInput(active_session, message)
         else:

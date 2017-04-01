@@ -2,6 +2,9 @@ from data_model import DataCollection, TaskData, QuestionData
 
 
 class Service:
+    def getAll(self):
+        return DataCollection.objects
+
     def get(self, r_id, id=None):
         if id is None:
             return DataCollection.objects
@@ -10,15 +13,17 @@ class Service:
     
     def insert(self, in_data):
         data = DataCollection()
-
-        print in_data
         data.name = in_data['name']
         data.requester_id = in_data['requester_id']
 
-        for item in in_data['items']:
+        for item in in_data['task_data']:
             entry = TaskData()
-            entry['content'] = item['content']
-            data['items'].append(entry)
+            for q_item in item['question_data']:
+                q_data = QuestionData()
+                q_data.content = q_item['content']
+                q_data.type = q_item['type']
+                entry.question_data.append(q_data)
+            data.task_data.append(entry)
 
         data.save()
         return data
@@ -31,10 +36,14 @@ class Service:
         data.name = in_data['name']
         data.requester_id = in_data['requester_id']
 
-        for item in in_data['items']:
+        for item in in_data['task_data']:
             entry = TaskData()
-            entry['content'] = item['content']
-            data['items'].append(entry)
+            for q_item in item['question_data']:
+                q_data = QuestionData()
+                q_data.content = q_item['content']
+                q_data.type = q_item['type']
+                entry.question_data.append(q_data)
+            data.task_data.append(entry)
 
         data.save()
         return data

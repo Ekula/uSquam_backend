@@ -10,6 +10,7 @@ import sys
 import logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def start(bot, update):
     result = InteractionRedirector.onInput(update.message.from_user.id, 'start')
@@ -64,6 +65,9 @@ def restart(bot, update):
     time.sleep(0.2)
     os.execl(sys.executable, sys.executable, *sys.argv)
 
+def error(bot, update, error):
+    logger.warn('Update "%s" caused error "%s"' % (update, error))
+
 def start_telegram_bot():
     print 'Get the updater'
     updater = Updater(TELEGRAM_KEY)
@@ -71,5 +75,5 @@ def start_telegram_bot():
     updater.dispatcher.add_handler(CommandHandler('task', task, pass_args=True,))
     updater.dispatcher.add_handler(CommandHandler('tasks', tasks))
     updater.dispatcher.add_handler(MessageHandler(None, message))
-
+    updater.dispatcher.add_error_handler(error)
     return updater
