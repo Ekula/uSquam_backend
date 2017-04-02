@@ -2,30 +2,28 @@ from resources.task.service import TaskService
 from resources.session.service import SessionService
 from resources.data.service import DataService
 from resources.session.session_model import Answer
+from intent import IntentParser
 
 class _SessionInteractionHandler:
-
     def __init__(self):
         self.handlers = {}
 
-    def interaction(self, expression):
+    def interaction(self, intent):
         def decorator(f):
-            self.handlers[expression] = f
+            self.handlers[intent] = f
             return f
         
         return decorator
 
     def handleInput(self, session, message):
-        handle_function = self.handlers.get(message)
+        intent = IntentParser.parse(message, self.handlers.keys())
+        handle_function = self.handlers.get(intent['intent_type'])
         if handle_function:
-            return handle_function(session, message)
-        else:
-            handle_function = self.handlers.get('*')
-            return handle_function(session, message)
+            return handle_function(session, intent['intent_type'])
 
 SessionInteractionHandler = _SessionInteractionHandler()
 
-@SessionInteractionHandler.interaction("*")
+@SessionInteractionHandler.interaction("Answer")
 def newTask(session, message):
     print 'newTask'
     task = TaskService.get(session['task_id'])
