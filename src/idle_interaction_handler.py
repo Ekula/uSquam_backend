@@ -1,37 +1,49 @@
 from resources.session.service import SessionService
 from resources.task.service import TaskService
 from resources.data.service import DataService
+from intent import IntentParser
 import random
 
 class _IdleInteractionHandler:
-
     def __init__(self):
         self.handlers = {}
 
-    def interaction(self, expression):
+    def interaction(self, intent):
         def decorator(f):
-            self.handlers[expression] = f
+            self.handlers[intent] = f
             return f
         
         return decorator
 
     def handleInput(self, user_id, message):
-        handle_function = self.handlers.get(message)
+        intent = IntentParser.parse(message, self.handlers.keys())
+        if not intent:
+            return "Sorry, I don't know what to say."
+        
+        handle_function = self.handlers.get(intent['intent_type'])
+
         if handle_function:
-            return handle_function(user_id, message)
+            return handle_function(user_id, intent)
         else:
             return "Sorry, I don't know what to say."
 
 IdleInteractionHandler = _IdleInteractionHandler()
 
-@IdleInteractionHandler.interaction("start")
-def start(user_id, message):
-    return """Hey what would you like to do?
+@IdleInteractionHandler.interaction("Help")
+def help(worker, message):
+    return """
+    Hi, 
+
+    I am usquam_bot and I am here to help you fulfill small comutation tasks \
+    for a reward using the usquam platform. Here's what I can do. 
+
+    I can give you a new task. Just ask me to give you a new task and I will do so, \
+    e.g. "Give me a task".
     
-    Just type task to get a new task!
+    If you need help, just say "I need some help" or "I don't know what to do"
     """
 
-@IdleInteractionHandler.interaction("task")
+@IdleInteractionHandler.interaction("NewTask")
 def newTask(worker, message):
     print 'Received: ', message, ' - Creating new task'
     # Choose random task and random item from data collection

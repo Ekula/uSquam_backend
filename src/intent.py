@@ -7,11 +7,7 @@ from adapt.intent import IntentBuilder
 from adapt.engine import DomainIntentDeterminationEngine
 
 
-
-# engine.register_domain('Domain1')
-# engine.register_domain('Domain2')
-
-class IntentParser:
+class _IntentParser:
 
     def __init__(self):
 
@@ -80,8 +76,12 @@ class IntentParser:
                 elif not expected_intents:
                     return intent
                 else:
-                    return None
+                    continue
+        
+        return None
 
+
+IntentParser = _IntentParser()
 
 
 if __name__ == "__main__":
