@@ -1,0 +1,14 @@
+{
+    "intent": "Help",
+    "required": [
+        {
+            "HelpKeyword": [
+                "help",
+                "assistance",
+                "assist",
+                "what to do",
+                "can you do"
+            ]
+        }
+    ]
+}
