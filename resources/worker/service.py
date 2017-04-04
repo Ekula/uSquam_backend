@@ -2,6 +2,9 @@ from worker_model import Worker
 
 class Service:
 
+    def get(self, id):
+        return Worker.objects.get(id=id)
+
     def insert(self, in_worker):
 
         worker = Worker()

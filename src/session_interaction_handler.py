@@ -3,6 +3,8 @@ from resources.session.service import SessionService
 from resources.data.service import DataService
 from resources.session.session_model import Answer
 from intent import IntentParser
+from resources.requester.service import RequesterService
+from resources.worker.service import WorkerService
 
 class _SessionInteractionHandler:
     def __init__(self):
@@ -57,8 +59,19 @@ def newTask(session, message):
         session.state = state
         
     else:
-        answer = "Thank you for completing the task"
-        session.status = "DONE"
+        # Give reward to user
+        requester = RequesterService.get(task['requester_id'])
+        worker = WorkerService.get(session['worker_id'])
+
+        reward = task['reward']
+        requester['credits'] -= reward
+        worker['credits'] += reward
+
+        requester.save()
+        worker.save()
+
+        answer = 'Thanks! You earned {} credits (Total: {}). Do you have any feedback or comments?'.format(reward, worker['credits'])
+        session.status = "DONE" # Todo: FEEDBACK status?
     
     SessionService.update(session)
     
