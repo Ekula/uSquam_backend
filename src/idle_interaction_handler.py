@@ -30,6 +30,7 @@ class _IdleInteractionHandler:
 IdleInteractionHandler = _IdleInteractionHandler()
 
 @IdleInteractionHandler.interaction("Help")
+@IdleInteractionHandler.interaction("Greetings")
 def help(worker, message):
     return """
     Hi, 
