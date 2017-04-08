@@ -32,3 +32,15 @@ class TestIntentParser(unittest.TestCase):
     def test_answer(self):
         result = IntentParser.parse("something else")
         self.assertEqual(result['intent_type'], "Answer")
+
+    def test_taskList(self):
+        positive = [
+            IntentParser.parse("Show me the list of tasks"),
+            IntentParser.parse("What tasks are there"),
+            IntentParser.parse("What is there to do"),
+            IntentParser.parse("What can I do?")
+        ]
+
+        for result in positive:
+            print result
+            self.assertEqual(result['intent_type'], "TaskList")
