@@ -77,4 +77,13 @@ def newTask(session, message):
     
     return answer
 
+@SessionInteractionHandler.interaction("CancelTask")
+def cancelTask(session, message):
+    task = TaskService.get(session['task_id'])
+    state = session['state']
 
+    session.status = "STOPPED"
+
+    SessionService.update(session)
+
+    return "Okay we stopped your task, thank you for trying!"
