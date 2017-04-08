@@ -21,7 +21,7 @@ class _SessionInteractionHandler:
         intent = IntentParser.parse(message, self.handlers.keys())
         handle_function = self.handlers.get(intent['intent_type'])
         if handle_function:
-            return handle_function(session, intent['intent_type'])
+            return handle_function(session, message)
 
 SessionInteractionHandler = _SessionInteractionHandler()
 
