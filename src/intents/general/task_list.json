@@ -1,0 +1,18 @@
+{
+    "intent": "TaskList",
+    "required": [
+        {
+            "TaskKeyword": [
+                "tasks",
+                "jobs",
+                "assignments",
+                "exercises"
+            ]
+        },
+        {
+            "TaskListVerb": [
+                "list"
+            ]
+        }
+    ]
+}
