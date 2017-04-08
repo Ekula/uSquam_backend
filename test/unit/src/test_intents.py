@@ -42,5 +42,15 @@ class TestIntentParser(unittest.TestCase):
         ]
 
         for result in positive:
-            print result
             self.assertEqual(result['intent_type'], "TaskList")
+
+    def test_cancelTask(self):
+        positive = [
+            IntentParser.parse("I do not want to do this task"),
+            IntentParser.parse("I want to stop"),
+            IntentParser.parse("I want to cancel")
+        ]
+
+        for result in positive:
+            print result
+            self.assertEqual(result['intent_type'], "CancelTask")
