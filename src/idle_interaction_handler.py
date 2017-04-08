@@ -44,6 +44,15 @@ def help(worker, message):
     If you need help, just say "I need some help" or "I don't know what to do"
     """
 
+@IdleInteractionHandler.interaction("TaskList")
+def taskList(worker, message):
+    tasks = TaskService.getAll()
+
+    answer = "These are the tasks that are currently available: \n\n{}".format("\n".join(["{} {}".format(task.name, task.description) for task in tasks]))
+
+    return answer
+
+
 @IdleInteractionHandler.interaction("NewTask")
 def newTask(worker, message):
     print 'Received: ', message, ' - Creating new task'
