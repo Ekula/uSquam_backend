@@ -52,5 +52,12 @@ class TestIntentParser(unittest.TestCase):
         ]
 
         for result in positive:
-            print result
             self.assertEqual(result['intent_type'], "CancelTask")
+
+    def test_keywords(self):
+
+        self.assertEqual(IntentParser.parse('task list')['intent_type'], "TaskList")
+        self.assertEqual(IntentParser.parse('task')['intent_type'], "NewTask")
+        self.assertEqual(IntentParser.parse('Task')['intent_type'], "NewTask")
+        self.assertEqual(IntentParser.parse('cancel')['intent_type'], "CancelTask")
+        self.assertEqual(IntentParser.parse('help')['intent_type'], "Help")

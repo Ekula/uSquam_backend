@@ -1,5 +1,8 @@
 {
     "intent": "TaskList",
+    "exact": [
+        "tasks"
+    ],
     "required": [
         {
             "TaskKeyword": [
