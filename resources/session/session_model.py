@@ -11,7 +11,6 @@ SESSION_STATUS = [
     'DONE'
 ]
 
-
 class Answer(EmbeddedDocument):
     _id                 = ObjectIdField(required=True, default=lambda: ObjectId() )
     message             = StringField(required=True)
@@ -21,6 +20,7 @@ class Answer(EmbeddedDocument):
 
 class Session(Document):
     task_id             = ObjectIdField(required=True)
+    review              = BoolBooleanField(default=False)
     task_data_id        = ObjectIdField(required=True)
     worker_id           = ObjectIdField(required=True)
     state               = IntField(default=0)
