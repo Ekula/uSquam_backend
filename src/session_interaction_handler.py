@@ -87,6 +87,7 @@ def newReviewTask(session, reviewed_session, message):
     answer = Answer()
     answer.message = message
     if answer.message is 'Submit':
+        answer = "Thanks for resubmitting the given answer!"
         # do nothing
         
     else:
