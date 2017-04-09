@@ -1,5 +1,8 @@
 {
     "intent": "Help",
+    "exact": [
+        "help"
+    ],
     "required": [
         {
             "HelpKeyword": [

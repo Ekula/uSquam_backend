@@ -11,6 +11,10 @@ SESSION_STATUS = [
     'DONE'
 ]
 
+SESSION_TYPES = [
+    'TASK',
+    'IDLE'
+]
 
 class Answer(EmbeddedDocument):
     _id                 = ObjectIdField(required=True, default=lambda: ObjectId() )
@@ -21,8 +25,9 @@ class Answer(EmbeddedDocument):
 
 class Session(Document):
     task_id             = ObjectIdField(required=True)
-    task_data_id        = ObjectIdField(required=True)
+    task_data_id        = ObjectIdField()
     worker_id           = ObjectIdField(required=True)
+    type                = StringField(default='TASK', choices=SESSION_TYPES)
     state               = IntField(default=0)
     answers             = EmbeddedDocumentListField(Answer)
     status              = StringField(default='ACTIVE', choices=SESSION_STATUS)

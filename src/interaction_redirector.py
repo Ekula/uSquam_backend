@@ -18,12 +18,16 @@ class _InteractionRedirector:
 
     def onInput(self, user_id, message):
         worker, new = self.populateWorker(user_id)
+
         if new:
             return IdleInteractionHandler.handleInput(worker, "I need help")
+        
         active_session = SessionService.findWhere(worker_id=worker['id'], status='ACTIVE').first()
 
-        if active_session:
+        if active_session and active_session['type'] == 'TASK':
             return SessionInteractionHandler.handleInput(active_session, message)
+        elif active_session and active_session['type'] == 'IDLE':
+            return IdleInteractionHandler.handleInput(active_session, message)
         else:
             return IdleInteractionHandler.handleInput(worker, message)
 

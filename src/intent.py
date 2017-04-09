@@ -4,6 +4,7 @@ import os
 import fnmatch
 import logging
 from adapt.intent import IntentBuilder
+from adapt.tools.text.tokenizer import tokenize_string
 from adapt.engine import DomainIntentDeterminationEngine
 
 
@@ -12,6 +13,7 @@ class _IntentParser:
     def __init__(self):
 
         self.engine = DomainIntentDeterminationEngine()
+        self.exact_matches = {}
 
         # Load all files in ./intents
         matches = []
@@ -38,6 +40,10 @@ class _IntentParser:
             self.engine.register_domain(domain)
         
         new_intent = IntentBuilder(data['intent'])
+
+        if 'exact' in data:
+            for term in data['exact']:
+                self.exact_matches[term] = data['intent']
 
         if 'required' in data:
             for entity in data['required']:
@@ -69,6 +75,14 @@ class _IntentParser:
         """
         Returns best match for intent.
         """
+        tokenized = ' '.join(tokenize_string(text)).lower()
+        if tokenized in self.exact_matches:
+            return {
+                'intent_type': self.exact_matches[tokenized],
+                'confidence': 1.0,
+                'Keyword': tokenized
+            }
+
         for intent in self.engine.determine_intent(text):
             if intent and intent.get('confidence') > 0.0:
                 if expected_intents and intent.get('intent_type') in expected_intents:

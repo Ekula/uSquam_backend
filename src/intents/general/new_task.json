@@ -1,5 +1,8 @@
 {
     "intent": "NewTask",
+    "exact": [
+        "task"
+    ],
     "required": [
         {
             "TaskKeyword": [

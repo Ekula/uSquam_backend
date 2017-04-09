@@ -1,10 +1,10 @@
 import unittest
 import mock
-from src.bots.bot_telegram import start, task, tasks
+from usquam.src.bots.bot_telegram import start, task, tasks
 
 class TelegramBotTest(unittest.TestCase):
 
-    @mock.patch('src.bots.bot_telegram.InteractionRedirector')
+    @mock.patch('usquam.src.bots.bot_telegram.InteractionRedirector')
     def test_start(self, mock_IR):
         mock_update = mock.MagicMock()
         mock_update.message.from_user.id = '1'
