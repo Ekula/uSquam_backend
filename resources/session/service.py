@@ -7,6 +7,8 @@ class Service:
         session.task_id = in_session['task_id']
         session.task_data_id = in_session['task_data_id']
         session.worker_id = in_session['worker_id']
+        if 'type' in in_session:
+            session.type = in_session['type']
         if 'status' in in_session:
             session.status = in_session['status']
         if 'state' in in_session:

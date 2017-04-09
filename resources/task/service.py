@@ -31,4 +31,8 @@ class Service:
         task.save()
         return task
 
+    def findWhere(self, **kwargs):
+
+        return Task.objects(**kwargs)
+
 TaskService = Service()

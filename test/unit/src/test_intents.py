@@ -61,3 +61,9 @@ class TestIntentParser(unittest.TestCase):
         self.assertEqual(IntentParser.parse('Task')['intent_type'], "NewTask")
         self.assertEqual(IntentParser.parse('cancel')['intent_type'], "CancelTask")
         self.assertEqual(IntentParser.parse('help')['intent_type'], "Help")
+
+    def test_numbers(self):
+
+        self.assertEqual(IntentParser.parse("1")['intent_type'], "Number")
+        self.assertEqual(int(IntentParser.parse("1")['NumberKeyword']), 1)
+        self.assertEqual(IntentParser.parse("20")['intent_type'], 'Answer')
