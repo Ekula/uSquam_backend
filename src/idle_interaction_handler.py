@@ -87,32 +87,35 @@ def newTask(worker, message):
 @IdleInteractionHandler.interaction("NewReviewTask")
 def newReviewTask(worker, message):
     print 'Received: ', message, ' - Creating new review task'
-    # If selected task type = 'review'
+    # if selected task type = 'review'
+    # 'session' is the current session for the review task
+    # 'reviewed_session' is the session being reviewed
+    
     sessions = SessionService.getAll()
-    session = random.choice(sessions)
-    task = TaskService.get(session.task_id)
-    reviewtask = TaskService.generate_reviewtask(session, task)
+    
+    # make sure to only generate review tasks for sessions of other workers and those that are not validated yet 
+    for item in sessions:
+        if (item.validated == False and item.review == False and item.worker_id != worker['id'] ):
+            reviewed_session = item
+            break
+            
+    task = TaskService.get(reviewed_session.task_id)
+    
+    # generate a review task for the selected session and corresponding task
+    reviewtask = TaskService.generate_reviewtask(reviewed_session, task)
     
     data_collection = DataService.get(None, task['data_collection_id'])
     
     task_data = random.choice(data_collection['task_data'])
     
-    new_session = {
-        'worker_id': worker['id'],
-        'task_id': task['id'],
-        'task_data_id': task_data['_id'],
-        'review': true
-    }
-    session = SessionService.insert(new_session)
-    
     question = task['questions'][0]['message']
-    answer = session['answers'][0]['message']
+    answer = reviewed_session['answers'][0]['message']
     
     # Find question data content
     data_collection = DataService.get(None, task['data_collection_id'])
     task_data = None
     for item in data_collection['task_data']:
-        if str(item['_id']) == str(session['task_data_id']):
+        if str(item['_id']) == str(reviewed_session['task_data_id']):
             task_data = item
             break
 

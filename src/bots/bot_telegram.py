@@ -1,4 +1,4 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, ReplyKeyboardMarkup
 from utils.secrets import TELEGRAM_KEY
 from src.interaction_redirector import InteractionRedirector
 from flask import request, jsonify, json
@@ -50,6 +50,14 @@ def build_menu(buttons, n_cols = 0, header_buttons = None, footer_buttons = None
     if footer_buttons:
         menu.append(footer_buttons)
     return menu
+
+def askGPSlocation(bot):
+    message(bot, "For the following task I need to know your location. Could you send me your location?")
+    location(bot, update)
+    
+def location(bot, update):
+    user = update.message.from_user
+    user_location = update.message.location
 
 def get_data_buttons(bot):
     button_list = [

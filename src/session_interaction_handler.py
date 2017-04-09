@@ -81,17 +81,22 @@ def newTask(session, message):
 @SessionInteractionHandler.interaction("ReviewAnswer")
 def newReviewTask(session, reviewed_session, message):
     print 'newReviewTask'
-    task = TaskService.get(session['task_id'])
+    # 'session' is the current session for the review task
+    # 'reviewed_session' is the session being reviewed
+    
+    task = TaskService.get(reviewed_session['task_id'])
     state = session['state']
 
     answer = Answer()
     answer.message = message
+    
+    # if the given answer is approved
     if answer.message is 'Submit':
         answer = "Thanks for resubmitting the given answer!"
-        # do nothing
-        
+        answer.validated = True;        
     else:
-        session.answers[0] = message
+        reviewed_session.answers[0] = message
+        answer.validated = True
 
     if state + 1 < len(task['questions']):
         state += 1
@@ -103,7 +108,7 @@ def newReviewTask(session, reviewed_session, message):
         data_collection = DataService.get(None, task['data_collection_id'])
         task_data = None
         for item in data_collection['task_data']:
-            if str(item['_id']) == str(session['task_data_id']):
+            if str(item['_id']) == str(reviewed_session['task_data_id']):
                 task_data = item
                 break
 
@@ -128,8 +133,10 @@ def newReviewTask(session, reviewed_session, message):
         worker.save()
 
         answer = 'Thanks! You earned {} credits (Total: {}). Do you have any feedback or comments?'.format(reward, worker['credits'])
-        session.status = "DONE" # Todo: FEEDBACK status?
-    
+        reviewed_session.validated = True
+        session.status = "DONE" 
+        
+    SessionService.update(reviewed_session)
     SessionService.update(session)
     
     return answer
