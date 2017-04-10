@@ -22,7 +22,7 @@ class Answer(EmbeddedDocument):
 class Session(Document):
     task_id             = ObjectIdField(required=True)
     # 'review' indicates if the session is for a regular task (false) or review task (true)
-    review              = BoolBooleanField(default=False)
+    review              = BooleanField(default=False)
     task_data_id        = ObjectIdField(required=True)
     worker_id           = ObjectIdField(required=True)
     state               = IntField(default=0)
