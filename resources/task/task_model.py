@@ -31,4 +31,7 @@ class Task(Document):
     time_indication     = FloatField(required=True)
     reward              = FloatField(required=True)
     active              = BooleanField(default=False)
+    gps_based           = BooleanField(default=False)
+    latitude            = StringField(required=False)
+    longitude           = StringField(required=False)
     date_modified       = DateTimeField(default=datetime.datetime.now)

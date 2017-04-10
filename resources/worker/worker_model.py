@@ -25,6 +25,7 @@ class WorkerHandles(EmbeddedDocument):
 class Worker(Document):
     username            = EmbeddedDocumentField(WorkerHandles)
     reputation          = FloatField(default=1)
+    location            = StringField()
     email               = EmailField()
     credits             = FloatField(default=0)
     properties          = EmbeddedDocumentField(WorkerProperties)

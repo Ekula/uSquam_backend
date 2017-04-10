@@ -3,6 +3,7 @@ from resources.task.service import TaskService
 from resources.data.service import DataService
 from resources.worker.service import WorkerService
 from resources.session.session_model import Session
+from math import sin, cos, sqrt, atan2
 from intent import IntentParser
 import random
 import logging
@@ -46,7 +47,7 @@ def createTaskInstance(task, session):
         if str(item['_id']) == str(session['task_data_id']):
             task_data = item
             break
-
+    
     # There could be no data item specified for this question
     if 'question_data_idx' in task['questions'][0]:
         # Choose first question data item from the list
@@ -100,7 +101,7 @@ def help(worker, message, intent):
 
 @IdleInteractionHandler.interaction("TaskList")
 def taskList(worker, message, intent):
-    tasks = TaskService.getAll()
+    tasks = TaskService.getAll()    
     task = TaskService.findWhere(name="Select Task")
 
     answer = "These are the tasks that are currently available: \
@@ -127,7 +128,7 @@ def selectTask(session, message, intent):
         return "Please choose a task from the list by indicating it's number. Say e.g. '1'"
 
     worker = WorkerService.get(session['worker_id'])
-
+    
     session.status = "DONE"
     SessionService.update(session)
 
@@ -141,8 +142,46 @@ def newTask(worker, message, intent):
     print 'Received: ', message, ' - Creating new task'
     # Choose random task and random item from data collection
     tasks = TaskService.getAll()
+    
     task = random.choice(tasks)
-
+    
+    if task.gps_based is True:
+        askLocation(worker, message, intent)
+        
     session = createTaskSessionIntance(worker, task)
 
     return createTaskInstance(task, session)
+
+@IdleInteractionHandler.interaction("NewLocation")
+def askLocation(worker, message, intent):
+    return "For the following task I need to know your location. Can you send me your location?"    
+
+def selectGPSTasks(session, location):
+    tasks = TaskService.getAll()
+    
+    for task in tasks:
+        if task.gps_based is True:
+            # ToDo: determine longitude/ latitude from the sent gps location
+            distance = calculateDistance(location.latitude, location.longitude, task.latitude, task.longitude)
+            if distance <= 5:
+                suitableGPSTasks.append(task)
+                
+    return suitableGPSTasks
+    
+def calculateDistance(lat1, lon1, lat2, lon2):
+    R = 6373.0
+
+    lat1 = radians(52.2296756)
+    lon1 = radians(21.0122287)
+    lat2 = radians(52.406374)
+    lon2 = radians(16.9251681)
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+    
+    return distance
