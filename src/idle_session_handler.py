@@ -32,6 +32,10 @@ class _IdleSessionHandler:
         print session['task_id']
         task = TaskService.findIdleTaskWhere(id=session['task_id'])
 
+        # Check if message is a location (so uuuugly)
+        if type(message) is dict and 'latitude' in message:
+            return listNearbyTasks(session, message)
+
         intents = []
         state = task.states[session.state]
         for action in state.actions:
@@ -82,3 +86,20 @@ def cancelTask(session, message, intent):
     # Todo: Delete session? Not useful anymore
 
     return {'answer': "Alright, putting this session on hold! If you need help, just send 'I need help'"}
+
+def listNearbyTasks(session, coords):
+    logging.info("Listing nearby tasks")
+
+    # Todo: Update worker properties, something like
+    # worker.properties.coordinates = [coords.longitude, coords.longitude]
+    # worker.properties.coordinates_updated = datetime.datetime.now
+
+    # Todo: Find nearby tasks
+    # ...
+
+
+    # Todo: If no tasks were found
+    session.status = "STOPPED"
+    SessionService.update(session)
+
+    return {'answer': 'No nearby tasks were found, sorry!'}

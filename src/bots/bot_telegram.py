@@ -40,7 +40,7 @@ def downloadFile(bot):
     newFile.download('image.jpg')
     
 def message(bot, update):
-    # Todo: Store location
+
     # Check answer type
     if update.message.text is not '':
         result = InteractionRedirector.onInput(update.message.from_user.id, update.message.text)
@@ -51,7 +51,7 @@ def message(bot, update):
         result = InteractionRedirector.onInput(update.message.from_user.id, update.message.photo)
     else:
         # Error: Input type is not recognized, send an empty string
-        result = InteractionRedirector.onInput(update.message.from_user.id, '')
+        result = InteractionRedirector.onInput(update.message.from_user.id, ' ')
 
     # Custom options for worker input (buttons, location, photo)
     if 'suggestions' in result:
@@ -63,7 +63,8 @@ def message(bot, update):
             reply_markup=ReplyKeyboardMarkup([buttons], one_time_keyboard=True))
     elif 'location' in result and result['location'] is True:
         update.message.reply_text(text=result['answer'], reply_markup=ReplyKeyboardMarkup([
-            [KeyboardButton("Send location", request_location=True), KeyboardButton("Cancel")]], one_time_keyboard=True))
+            [KeyboardButton("Send location", request_location=True), KeyboardButton("Cancel")]],
+            one_time_keyboard=True))
     else:
         # Normal text
         update.message.reply_text(text=result['answer'])

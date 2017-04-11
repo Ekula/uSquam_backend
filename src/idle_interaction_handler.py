@@ -61,7 +61,7 @@ def taskList(worker, message, intent):
 
     session = createIdleSessionInstance(worker, task)
 
-    return {'answer': "\n".join([answer, task.states[0].question])}
+    return {'answer': "\n".join([answer, task.states[0].question]), 'suggestions': ['1', '2', '3', '4', '5', 'Cancel']}
 
 @IdleInteractionHandler.interaction("NewTask")
 def newTask(worker, message, intent):
@@ -109,3 +109,15 @@ def newReviewTask(worker, message, intent):
     session = createReviewSessionIntance(worker, reviewtask)
 
     return {'answer': review}
+
+
+@IdleInteractionHandler.interaction("SituationalTaskList")
+def taskList(worker, message, intent):
+
+    # Todo: Check how long ago location was updated
+
+    task = TaskService.findIdleTaskWhere(name="SelectTask")
+
+    session = createIdleSessionInstance(worker, task)
+
+    return {'answer': "Please share your location so that I can find a nearby task", 'location': True}
