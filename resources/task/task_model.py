@@ -41,3 +41,15 @@ class ReviewTask(Document):
     reward              = FloatField(required=True)
     questions           = EmbeddedDocumentListField(Question)
     answers             = EmbeddedDocumentListField(Answer)
+
+class Action(EmbeddedDocument):
+    intent              = StringField()
+    action              = StringField()
+
+class State(EmbeddedDocument):
+    question            = StringField()
+    actions             = EmbeddedDocumentListField(Action)
+
+class IdleTask(Document):
+    name               = StringField(required=True, unique=True)
+    states             = EmbeddedDocumentListField(State)
