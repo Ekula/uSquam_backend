@@ -1,4 +1,5 @@
-from task_model import Task, Question, ReviewTask
+from task_model import Task, Question, ReviewTask, IdleTask, Action, State
+import traceback
 
 class Service:
     def getAll(self):
@@ -49,8 +50,86 @@ class Service:
         task.save()
         return task
 
+    def createIdleTask(self, idle_task):
+
+        task = IdleTask()
+        task.name = idle_task['name']
+        
+        state_dict = idle_task['states']
+        for in_state in state_dict:
+            state = State()
+            state.question = in_state['question']
+
+            for in_intent, in_action in in_state['actions'].iteritems():
+                action = Action()
+                action.intent = in_intent
+                action.action = in_action
+
+                state.actions.append(action)
+            
+            task.states.append(state)
+
+        task.save()
+        return task
+
     def findWhere(self, **kwargs):
 
         return Task.objects(**kwargs)
 
+    def findIdleTaskWhere(self, **kwargs):
+
+        return IdleTask.objects.get(**kwargs)
+
 TaskService = Service()
+
+### Create some standard IdleTasks
+try:
+    # Replace before create
+    idle_task = TaskService.findIdleTaskWhere(name='SelectTask')
+    if idle_task is not None:
+        idle_task.delete()
+
+    TaskService.createIdleTask({
+        "name": "SelectTask",
+        "states": [
+            {
+                "question": "Please select a task by sending its number.",
+                "actions": {
+                    "Number": "SelectTask",
+                    "CancelTask": "CancelTask"
+                }
+            }
+        ]
+    })
+except Exception: 
+    traceback.print_exc()
+    print "Could not create the SelectTask task"
+
+try:
+    # Replace before create
+    idle_task = TaskService.findIdleTaskWhere(name='SituationalTask')
+    if idle_task is not None:
+        idle_task.delete()
+
+    TaskService.createIdleTask({
+        "name": "SituationalTask",
+        "states": [
+            {
+                "question": "Can you share your location with me?",
+                "actions": {
+                    "Location": "ListSituationalTasks",
+                    "CancelTask": "CancelTask"
+                }
+            },
+            {
+                "question": "Please select a task",
+                "actions": {
+                    "Number": "SelectSituationalTask",
+                    "CancelTask": "CancelTask"
+                }
+            }
+        ]
+    })
+except:
+    traceback.print_exc()
+    print "Could not create the SelectTask task"

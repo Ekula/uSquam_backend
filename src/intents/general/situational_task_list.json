@@ -1,0 +1,11 @@
+{
+    "intent": "SituationalTaskList",
+    "required": [
+        {
+            "SituationalTaskKeyword": [
+                "situational tasks",
+                "nearby tasks"
+            ]
+        }
+    ]
+}

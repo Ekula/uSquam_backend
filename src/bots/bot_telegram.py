@@ -1,5 +1,5 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler
-from telegram import ReplyKeyboardMarkup
+from telegram import ReplyKeyboardMarkup, KeyboardButton
 from utils.secrets import TELEGRAM_KEY
 from src.interaction_redirector import InteractionRedirector
 from flask import request, jsonify, json
@@ -40,8 +40,38 @@ def downloadFile(bot):
     newFile.download('image.jpg')
     
 def message(bot, update):
-    result = InteractionRedirector.onInput(update.message.from_user.id, update.message.text)
-    update.message.reply_text(result)
+
+    # Check answer type
+    if update.message.text is not '':
+        result = InteractionRedirector.onInput(update.message.from_user.id, update.message.text)
+    elif update.message.location is not None:
+        geo_loc = {'latitude': update.message.location.latitude, 'longitude': update.message.location.longitude}
+        result = InteractionRedirector.onInput(update.message.from_user.id, geo_loc)
+    elif update.message.photo is not None and len(message.text.photo) > 0:
+        result = InteractionRedirector.onInput(update.message.from_user.id, update.message.photo)
+    else:
+        # Error: Input type is not recognized, send an empty string
+        result = InteractionRedirector.onInput(update.message.from_user.id, ' ')
+
+    # Custom options for worker input (buttons, location, photo)
+    if 'suggestions' in result:
+        buttons = []
+        for suggestion in result['suggestions']:
+            buttons.append(KeyboardButton(suggestion))
+        update.message.reply_text(
+            text=result['answer'],
+            reply_markup=ReplyKeyboardMarkup([buttons], one_time_keyboard=True))
+    elif 'location' in result and result['location'] is True:
+        update.message.reply_text(text=result['answer'], reply_markup=ReplyKeyboardMarkup([
+            [KeyboardButton("Send location", request_location=True), KeyboardButton("Cancel")]],
+            one_time_keyboard=True))
+    else:
+        # Normal text
+        update.message.reply_text(text=result['answer'])
+
+def parseLocation(bot, update):
+    latitude = update.message.location.latitude
+    longitude = update.message.location.longitude
 
 # buttons: List, n_cols: int, header_buttons: List = none, footer_buttons: List = none
 def build_menu(buttons, n_cols = 0, header_buttons = None, footer_buttons = None):                 

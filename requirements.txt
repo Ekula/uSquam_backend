@@ -6,4 +6,5 @@ mongoengine
 python-telegram-bot
 flask-bcrypt
 bson
-sphinx
+adapt-parser
+slackclient

@@ -1,5 +1,6 @@
 from mongoengine import Document, EmbeddedDocument, EmbeddedDocumentField, StringField, ListField, ReferenceField, BooleanField, FloatField, \
-    IntField, EmailField, CASCADE
+    IntField, EmailField, DateTimeField, PointField
+import datetime
 
 
 class WorkerProperties(EmbeddedDocument):
@@ -11,6 +12,8 @@ class WorkerProperties(EmbeddedDocument):
     uses_public_transport = BooleanField()
     income              = IntField()
     job_title           = StringField()
+    coordinates         = PointField(default=[0, 0])
+    coordinates_updated = DateTimeField(default=datetime.datetime.min)
 
 
 class WorkerHandles(EmbeddedDocument):
@@ -28,3 +31,4 @@ class Worker(Document):
     email               = EmailField()
     credits             = FloatField(default=0)
     properties          = EmbeddedDocumentField(WorkerProperties)
+

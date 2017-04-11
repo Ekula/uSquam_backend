@@ -5,6 +5,7 @@ from resources.session.session_model import Answer
 from intent import IntentParser
 from resources.requester.service import RequesterService
 from resources.worker.service import WorkerService
+from src.helper_functions import *
 
 class _SessionInteractionHandler:
     def __init__(self):
@@ -27,7 +28,8 @@ SessionInteractionHandler = _SessionInteractionHandler()
 
 def reviewAnswer(reviewed_session, message):
     print 'newReviewTask'
-    
+    result = {}
+
     print reviewed_session['task_id']
     task = TaskService.getReviewTask(reviewed_session['task_id'])
     session = SessionService.get(task['original_session'])
@@ -78,8 +80,9 @@ def reviewAnswer(reviewed_session, message):
         
     SessionService.update(reviewed_session)
     SessionService.update(session)
-    
-    return review
+
+    result['answer'] = review
+    return result
 
 @SessionInteractionHandler.interaction("Answer")
 def newTask(session, message):
@@ -92,31 +95,17 @@ def newTask(session, message):
 
     answer = Answer()
     answer.message = message
-    # answer.question = task['questions'][state]['_id']
     session.answers.append(answer)
 
+    result = {}
+
     if state + 1 < len(task['questions']):
+        # Prepare a new question for the worker
         state += 1
-
-        question = task['questions'][state]['message']
-
-        # Todo: Create a question format function somewhere (same code in idle_interaction_handler)
-        # Find question data content
-        data_collection = DataService.get(task['data_collection_id'])
-        task_data = None
-        for item in data_collection['task_data']:
-            if str(item['_id']) == str(session['task_data_id']):
-                task_data = item
-                break
-
-        # There could be no data item specified for this question
-        if 'question_data_idx' in task['questions'][state]:
-            question_data = task_data.question_data[task['questions'][state]['question_data_idx']].content
-            answer = '{}\n  {}'.format(question, question_data)
-        else:
-            answer = '{}'.format(question)
         session.state = state
-        
+
+        result = formatQuestion(task, session)
+
     else:
         # Give reward to user
         requester = RequesterService.get(task['requester_id'])
@@ -130,11 +119,11 @@ def newTask(session, message):
         worker.save()
 
         answer = 'Thanks! You earned {} credits (Total: {}). Do you have any feedback or comments?'.format(reward, worker['credits'])
+        result['answer'] = answer
         session.status = "DONE" # Todo: FEEDBACK status?
     
     SessionService.update(session)
-    
-    return answer
+    return result
 
 @SessionInteractionHandler.interaction("CancelTask")
 def cancelTask(session, message):
@@ -145,4 +134,4 @@ def cancelTask(session, message):
 
     SessionService.update(session)
 
-    return "Okay we stopped your task, thank you for trying!"
+    return {'answer': "Okay we stopped your task, thank you for trying!"}
