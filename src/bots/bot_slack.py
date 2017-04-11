@@ -3,6 +3,7 @@ from utils.secrets import SLACKBOT_KEY
 from src.interaction_redirector import InteractionRedirector
 import time
 import logging
+import traceback
 import threading
 
 class SlackBot(threading.Thread):
@@ -27,7 +28,8 @@ class SlackBot(threading.Thread):
                         channel=event['channel'],
                         text=answer
                     )
-                except:
+                except Exception as error:
+                    traceback.print_exc()
                     logging.warning(event)
 
 

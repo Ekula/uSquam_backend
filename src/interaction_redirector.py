@@ -1,5 +1,6 @@
 from session_interaction_handler import SessionInteractionHandler
 from idle_interaction_handler import IdleInteractionHandler
+from idle_session_handler import IdleSessionHandler
 from resources.session.service import SessionService
 from resources.worker.service import WorkerService
 from resources.worker.worker_model import WorkerHandles
@@ -27,7 +28,7 @@ class _InteractionRedirector:
         if active_session and active_session['type'] in ['TASK', 'REVIEW']:
             return SessionInteractionHandler.handleInput(active_session, message)
         elif active_session and active_session['type'] == 'IDLE':
-            return IdleInteractionHandler.handleInput(active_session, message)
+            return IdleSessionHandler.handleInput(active_session, message)
         else:
             return IdleInteractionHandler.handleInput(worker, message)
 
