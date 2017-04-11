@@ -5,6 +5,7 @@ from resources.session.session_model import Answer
 from intent import IntentParser
 from resources.requester.service import RequesterService
 from resources.worker.service import WorkerService
+from src.helper_functions import *
 
 class _SessionInteractionHandler:
     def __init__(self):
@@ -80,7 +81,7 @@ def reviewAnswer(reviewed_session, message):
     SessionService.update(reviewed_session)
     SessionService.update(session)
 
-    result.answer = review
+    result['answer'] = review
     return result
 
 @SessionInteractionHandler.interaction("Answer")
@@ -99,30 +100,11 @@ def newTask(session, message):
     result = {}
 
     if state + 1 < len(task['questions']):
+        # Prepare a new question for the worker
         state += 1
         session.state = state
 
-        question = task['questions'][state]['message']
-
-        # Todo: Create a question format function somewhere (same code in idle_interaction_handler)
-        # Find question data content
-        data_collection = DataService.get(task['data_collection_id'])
-        task_data = None
-        for item in data_collection['task_data']:
-            if str(item['_id']) == str(session['task_data_id']):
-                task_data = item
-                break
-
-        # There could be no data item specified for this question
-        if 'question_data_idx' in task['questions'][state]:
-            question_data = task_data.question_data[task['questions'][state]['question_data_idx']].content
-            answer = '{}\n  {}'.format(question, question_data)
-        else:
-            answer = '{}'.format(question)
-
-        # Check if there suggestions to be used as buttons in the chat application
-        if 'suggestions' in task['questions'][state]:
-            result['suggestions'] = task['questions'][state].suggestions
+        result = formatQuestion(task, session)
 
     else:
         # Give reward to user
