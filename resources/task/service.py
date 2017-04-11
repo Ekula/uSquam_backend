@@ -93,7 +93,7 @@ try:
         "name": "SelectTask",
         "states": [
             {
-                "question": "Please select a task",
+                "question": "Please select a task by sending its number.",
                 "actions": {
                     "Number": "SelectTask",
                     "CancelTask": "CancelTask"

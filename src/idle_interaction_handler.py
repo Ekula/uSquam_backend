@@ -55,7 +55,7 @@ def taskList(worker, message, intent):
     tasks = TaskService.getAll()
 
     answer = "These are the tasks that are currently available: \
- \n\n{}\n\nWhich task would you like?".format("\n".join(["{}".format(task.name) for task in tasks]))
+ \n\n{}\n\nWhich task would you like?".format("\n".join(["{}. {}".format(i+1, task.name) for i, task in enumerate(tasks)]))
 
     task = TaskService.findIdleTaskWhere(name="SelectTask")
 
