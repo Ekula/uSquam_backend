@@ -119,11 +119,10 @@ def newTask(session, message):
         worker.save()
 
         answer = 'Thanks! You earned {} credits (Total: {}). Do you have any feedback or comments?'.format(reward, worker['credits'])
+        result['answer'] = answer
         session.status = "DONE" # Todo: FEEDBACK status?
     
     SessionService.update(session)
-
-    result['answer'] = answer
     return result
 
 @SessionInteractionHandler.interaction("CancelTask")

@@ -53,18 +53,20 @@ def message(bot, update):
         # Error: Input type is not recognized, send an empty string
         result = InteractionRedirector.onInput(update.message.from_user.id, '')
 
-    if 'suggestions' not in result:
-        update.message.reply_text(text=result['answer'])
-    elif 'location' in result and result['location'] is True:
-        update.message.reply_text(text=result['answer'], reply_markup=ReplyKeyboardMarkup([
-            [KeyboardButton("Send location", request_location=True), KeyboardButton("Cancel")]], one_time_keyboard=True))
-    else:
+    # Custom options for worker input (buttons, location, photo)
+    if 'suggestions' in result:
         buttons = []
         for suggestion in result['suggestions']:
             buttons.append(KeyboardButton(suggestion))
         update.message.reply_text(
             text=result['answer'],
             reply_markup=ReplyKeyboardMarkup([buttons], one_time_keyboard=True))
+    elif 'location' in result and result['location'] is True:
+        update.message.reply_text(text=result['answer'], reply_markup=ReplyKeyboardMarkup([
+            [KeyboardButton("Send location", request_location=True), KeyboardButton("Cancel")]], one_time_keyboard=True))
+    else:
+        # Normal text
+        update.message.reply_text(text=result['answer'])
 
 def parseLocation(bot, update):
     latitude = update.message.location.latitude

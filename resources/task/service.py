@@ -68,7 +68,7 @@ class Service:
                 state.actions.append(action)
             
             task.states.append(state)
-        
+
         task.save()
         return task
 
@@ -84,6 +84,11 @@ TaskService = Service()
 
 ### Create some standard IdleTasks
 try:
+    # Replace before create
+    idle_task = TaskService.findIdleTaskWhere(name='SelectTask')
+    if idle_task is not None:
+        idle_task.delete()
+
     TaskService.createIdleTask({
         "name": "SelectTask",
         "states": [
@@ -101,6 +106,11 @@ except Exception:
     print "Could not create the SelectTask task"
 
 try:
+    # Replace before create
+    idle_task = TaskService.findIdleTaskWhere(name='SituationalTask')
+    if idle_task is not None:
+        idle_task.delete()
+
     TaskService.createIdleTask({
         "name": "SituationalTask",
         "states": [

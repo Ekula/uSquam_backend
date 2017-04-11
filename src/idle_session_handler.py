@@ -71,4 +71,4 @@ def selectTask(session, message, intent):
 
     new_session = createTaskSessionIntance(worker, task)
 
-    return createTaskInstance(task, new_session)
+    return formatQuestion(task, new_session)
