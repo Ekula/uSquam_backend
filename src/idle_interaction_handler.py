@@ -20,15 +20,16 @@ class _IdleInteractionHandler:
 
     def handleInput(self, worker, message):
         intent = IntentParser.parse(message, self.handlers.keys())
+        error_result = {'answer': "Sorry, I don't know what to say."}
         if not intent:
-            return "Sorry, I don't know what to say."
-        
+            return error_result
+
         handle_function = self.handlers.get(intent['intent_type'])
 
         if handle_function:
             return handle_function(worker, message, intent)
         else:
-            return "Sorry, I don't know what to say."
+            return error_result
 
 IdleInteractionHandler = _IdleInteractionHandler()
 
@@ -55,7 +56,7 @@ def createTaskInstance(task, session):
     else:
         answer = '{}'.format(question)
 
-    return answer
+    return {'answer': answer}
 
 def createTaskSessionIntance(worker, task):
     data_collection = DataService.get(task['data_collection_id'])
@@ -97,27 +98,17 @@ def createIdleSessionInstance(worker, task):
 @IdleInteractionHandler.interaction("Help")
 @IdleInteractionHandler.interaction("Greetings")
 def help(worker, message, intent):
-    return """
-    Hi, 
+    return {'answer': """
+Hi, 
 
-    I am usquam_bot and I am here to help you fulfill small comutation tasks \
-    for a reward using the usquam platform. Here's what I can do. 
+I am usquam_bot and I am here to help you fulfill small commutation tasks \
+for a reward using the uSquam platform. Here's what I can do. 
 
-    I can give you a new task. Just ask me to give you a new task and I will do so, \
-    e.g. "Give me a task".
-    
-    If you need help, just say "I need some help" or "I don't know what to do"
-    """
+I can give you a new task. Just ask me to give you a new task and I will do so, \
+e.g. "Give me a task".
 
-@IdleInteractionHandler.interaction("NewTask")
-def newTask(worker, message):
-    print 'Received: ', message, ' - Creating new task'
-    # If selected task type = 'regular'
-    # Choose random task and random item from data collection
-
-    session = createTaskSessionIntance(worker, task)
-
-    return createTaskInstance(task, session)
+If you need help, just say "I need some help" or "I don't know what to do"
+"""}
 
 
 @IdleInteractionHandler.interaction("TaskList")
@@ -130,14 +121,14 @@ def taskList(worker, message, intent):
 
     session = createIdleSessionInstance(worker, task)
 
-    return answer
+    return {'answer': answer}
 
 @IdleInteractionHandler.interaction("Number")
 def selectTask(session, message, intent):
 
     if not 'id' in session or not session['type'] == 'IDLE': 
-        return 'It seems like you havent listed the tasks first. \
- To select a tasks write "tasks". '
+        return {'answer': 'It seems like you haven\'t listed the tasks first. \
+ To select a task, send "tasks". '}
 
     index = int(intent['NumberKeyword']) - 1
     tasks = TaskService.getAll()
@@ -146,7 +137,7 @@ def selectTask(session, message, intent):
     if index < len(tasks):
         task = tasks[index]
     else:
-        return "Please choose a task from the list by indicating it's number. Say e.g. '1'"
+        return {'answer': "Please choose a task from the list by indicating it's number. Say e.g. '1'"}
     
     worker = WorkerService.get(session['worker_id'])
 
@@ -183,7 +174,7 @@ def newReviewTask(worker, message, intent):
             break
 
     if not reviewed_session:
-        return "There are currently no tasks that need reviewing."            
+        return {'answer': "There are currently no tasks that need reviewing."}
 
     task = TaskService.get(reviewed_session.task_id)
     
@@ -202,4 +193,4 @@ def newReviewTask(worker, message, intent):
 
     session = createReviewSessionIntance(worker, reviewtask)
 
-    return review
+    return {'answer': review}

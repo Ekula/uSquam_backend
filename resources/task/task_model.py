@@ -32,6 +32,7 @@ class Task(Document):
     reward              = FloatField(required=True)
     active              = BooleanField(default=False)
     date_modified       = DateTimeField(default=datetime.datetime.now)
+    coordinates         = ListField(FloatField())
     
 class ReviewTask(Document):
     task_id             = ObjectIdField(required=True)

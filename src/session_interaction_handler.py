@@ -27,7 +27,8 @@ SessionInteractionHandler = _SessionInteractionHandler()
 
 def reviewAnswer(reviewed_session, message):
     print 'newReviewTask'
-    
+    result = {}
+
     print reviewed_session['task_id']
     task = TaskService.getReviewTask(reviewed_session['task_id'])
     session = SessionService.get(task['original_session'])
@@ -78,8 +79,9 @@ def reviewAnswer(reviewed_session, message):
         
     SessionService.update(reviewed_session)
     SessionService.update(session)
-    
-    return review
+
+    result.answer = review
+    return result
 
 @SessionInteractionHandler.interaction("Answer")
 def newTask(session, message):
@@ -92,11 +94,13 @@ def newTask(session, message):
 
     answer = Answer()
     answer.message = message
-    # answer.question = task['questions'][state]['_id']
     session.answers.append(answer)
+
+    result = {}
 
     if state + 1 < len(task['questions']):
         state += 1
+        session.state = state
 
         question = task['questions'][state]['message']
 
@@ -115,8 +119,11 @@ def newTask(session, message):
             answer = '{}\n  {}'.format(question, question_data)
         else:
             answer = '{}'.format(question)
-        session.state = state
-        
+
+        # Check if there suggestions to be used as buttons in the chat application
+        if 'suggestions' in task['questions'][state]:
+            result['suggestions'] = task['questions'][state].suggestions
+
     else:
         # Give reward to user
         requester = RequesterService.get(task['requester_id'])
@@ -133,8 +140,9 @@ def newTask(session, message):
         session.status = "DONE" # Todo: FEEDBACK status?
     
     SessionService.update(session)
-    
-    return answer
+
+    result['answer'] = answer
+    return result
 
 @SessionInteractionHandler.interaction("CancelTask")
 def cancelTask(session, message):
@@ -145,4 +153,4 @@ def cancelTask(session, message):
 
     SessionService.update(session)
 
-    return "Okay we stopped your task, thank you for trying!"
+    return {'answer': "Okay we stopped your task, thank you for trying!"}

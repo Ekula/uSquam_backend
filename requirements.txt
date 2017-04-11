@@ -7,3 +7,5 @@ python-telegram-bot
 flask-bcrypt
 bson
 sphinx
+telegram
+slackclient
