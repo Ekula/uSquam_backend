@@ -28,6 +28,14 @@ $ pip install nose
 $ pip install green
 ```
 
+## API keys
+
+In order to keep our development bots separate you should generate your own 
+API keys for your test bots. For **Slack** go to 
+[this](https://in4325.slack.com/apps/new/A0F7YS25R-bots) link and add your 
+bot. Afterwards update the key value in our secrets file `utils/secrets.py`.
+
+
 ## Testing (for developers)
 All methods that we write should be tested. There is a ```test``` folder. Its contents are 
 structured in the same way as the rest of the root of the package. Each file should have a

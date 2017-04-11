@@ -2,6 +2,7 @@ from flask import Flask
 import utils.database 
 from resources.register import api_bp
 from src.bots.bot_telegram import start_telegram_bot
+from src.bots.bot_slack import SlackBot
 from multiprocessing import Process, Manager
 from utils.mongoengine_jsonencoder import MongoEngineJSONEncoder
 from time import sleep
@@ -28,6 +29,8 @@ if __name__ == "__main__":
     if 'WERKZEUG_RUN_MAIN' in os.environ:
         updater = start_telegram_bot()
         updater.start_polling()
+        sc = SlackBot()
+        sc.start()     
 
     debugMode = parser.parse_args().debug
     deployMode = parser.parse_args().deploy
@@ -37,5 +40,8 @@ if __name__ == "__main__":
     else:
         app.run(debug=debugMode, use_reloader=debugMode)
 
+    app.run()
+
     if updater is not None:
         updater.stop()
+        sc.stop()
