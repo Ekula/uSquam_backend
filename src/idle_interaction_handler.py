@@ -178,7 +178,7 @@ def newReviewTask(worker, message, intent):
     
     reviewed_session = None
     for item in sessions:
-        if not item.validated and item.type == 'TASK' and item.worker_id != worker['id'] ):
+        if not item.validated and item.type == 'TASK' and item.worker_id != worker['id']:
             reviewed_session = item
             break
 
