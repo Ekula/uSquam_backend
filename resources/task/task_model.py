@@ -1,5 +1,5 @@
 from mongoengine import Document, EmbeddedDocument, EmbeddedDocumentListField, StringField, ListField, ReferenceField, \
-    BooleanField, FloatField,  DateTimeField, ObjectIdField, CASCADE, IntField
+    BooleanField, FloatField,  DateTimeField, ObjectIdField, CASCADE, IntField, PointField
 from resources.session.session_model import Answer 
 import datetime
 
@@ -32,7 +32,7 @@ class Task(Document):
     reward              = FloatField(required=True)
     active              = BooleanField(default=False)
     date_modified       = DateTimeField(default=datetime.datetime.now)
-    coordinates         = ListField(FloatField())
+    coordinates         = PointField()
     
 class ReviewTask(Document):
     task_id             = ObjectIdField(required=True)

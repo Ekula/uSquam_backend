@@ -1,5 +1,5 @@
 from mongoengine import Document, EmbeddedDocument, EmbeddedDocumentField, StringField, ListField, ReferenceField, BooleanField, FloatField, \
-    IntField, EmailField, DateTimeField
+    IntField, EmailField, DateTimeField, PointField
 import datetime
 
 
@@ -12,7 +12,7 @@ class WorkerProperties(EmbeddedDocument):
     uses_public_transport = BooleanField()
     income              = IntField()
     job_title           = StringField()
-    coordinates         = ListField(FloatField(), default=[0, 0])
+    coordinates         = PointField(default=[0, 0])
     coordinates_updated = DateTimeField(default=datetime.datetime.min)
 
 

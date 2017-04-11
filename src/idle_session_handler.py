@@ -72,3 +72,13 @@ def selectTask(session, message, intent):
     new_session = createTaskSessionIntance(worker, task)
 
     return formatQuestion(task, new_session)
+
+@IdleSessionHandler.action("CancelTask")
+def cancelTask(session, message, intent):
+    logging.info("Cancel task")
+
+    session.status = "ON_HOLD"
+    SessionService.update(session)
+    # Todo: Delete session? Not useful anymore
+
+    return {'answer': "Alright, putting this session on hold! If you need help, just send 'I need help'"}
