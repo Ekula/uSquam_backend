@@ -11,22 +11,26 @@ SESSION_STATUS = [
     'DONE'
 ]
 
+SESSION_TYPES = [
+    'TASK',
+    'IDLE',
+    'REVIEW'
+]
+
 class Answer(EmbeddedDocument):
     _id                 = ObjectIdField(required=True, default=lambda: ObjectId() )
     message             = StringField(required=True)
     timestamp           = DateTimeField(default=datetime.datetime.now())
-    validated           = BooleanField(default=False)
+    validated_answer    = StringField()
     #question           = ObjectIdField(required=True)
 
 
 class Session(Document):
     task_id             = ObjectIdField(required=True)
-    # 'review' indicates if the session is for a regular task (false) or review task (true)
-    review              = BoolBooleanField(default=False)
-    task_data_id        = ObjectIdField(required=True)
+    task_data_id        = ObjectIdField()
     worker_id           = ObjectIdField(required=True)
+    type                = StringField(default='TASK', choices=SESSION_TYPES)
     state               = IntField(default=0)
     answers             = EmbeddedDocumentListField(Answer)
-    # 'validated' indicates if the session has been reviewed
     validated           = BooleanField(default=False)
     status              = StringField(default='ACTIVE', choices=SESSION_STATUS)

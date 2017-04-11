@@ -5,11 +5,8 @@ class Service:
     def getAll(self):
         return DataCollection.objects
 
-    def get(self, r_id, id=None):
-        if id is None:
-            return DataCollection.objects
-        else:
-            return DataCollection.objects.get(id=id)
+    def get(self, id):
+        return DataCollection.objects.get(id=id)
     
     def insert(self, in_data):
         data = DataCollection()

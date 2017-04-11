@@ -1,5 +1,5 @@
 {
-    "intent": "NewTask",
+    "intent": "NewReviewTask",
     "exact": [
         "task"
     ],
@@ -10,6 +10,12 @@
                 "job",
                 "assignment",
                 "exercise"
+            ]
+        },
+        {
+            "ReviewKeyword": [
+                "check",
+                "review"
             ]
         },
         {

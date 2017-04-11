@@ -1,4 +1,5 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, ReplyKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, MessageHandler
+from telegram import ReplyKeyboardMarkup
 from utils.secrets import TELEGRAM_KEY
 from src.interaction_redirector import InteractionRedirector
 from flask import request, jsonify, json

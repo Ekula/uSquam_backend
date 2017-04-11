@@ -1,0 +1,21 @@
+{
+    "intent": "CancelTask",
+    "required": [
+        {
+            "CancelTaskVerb": [
+                "cancel",
+                "stop",
+                "do not want to do"
+            ]
+        }
+    ],
+    "optionally": [
+        {
+            "TaskKeyword": [
+                "task",
+                "job",
+                "assignment"
+            ]
+        }
+    ]
+}
