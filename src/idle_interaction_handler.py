@@ -40,7 +40,7 @@ def createTaskInstance(task, session):
     question = task['questions'][0]['message']
     # Todo: Create a question format function somewhere (same code in session_interaction_handler)
     # Find question data content
-    data_collection = DataService.get(None, task['data_collection_id'])
+    data_collection = DataService.get(task['data_collection_id'])
     task_data = None
     for item in data_collection['task_data']:
         if str(item['_id']) == str(session['task_data_id']):
@@ -58,13 +58,23 @@ def createTaskInstance(task, session):
     return answer
 
 def createTaskSessionIntance(worker, task):
-    data_collection = DataService.get(None, task['data_collection_id'])
+    data_collection = DataService.get(task['data_collection_id'])
 
     task_data = random.choice(data_collection['task_data'])
     new_session = {
         'worker_id': worker['id'],
         'task_id': task['id'],
-        'task_data_id': task_data['_id']
+        'task_data_id': task_data['_id'],
+        'review': False
+    }
+    return SessionService.insert(new_session)
+
+def createReviewSessionIntance(worker, task):
+    new_session = {
+        'worker_id': worker['id'],
+        'task_id': task['id'],
+        'type': 'REVIEW',
+        'review': False
     }
     return SessionService.insert(new_session)
 
@@ -74,7 +84,8 @@ def createIdleSessionInstance(worker, task):
         'worker_id': worker['id'],
         'task_id': task['id'],
         'task_data_id': None,
-        'type': 'IDLE'
+        'type': 'IDLE',
+        'review': False
     }
     return SessionService.insert(new_session)
 
@@ -97,6 +108,17 @@ def help(worker, message, intent):
     
     If you need help, just say "I need some help" or "I don't know what to do"
     """
+
+@IdleInteractionHandler.interaction("NewTask")
+def newTask(worker, message):
+    print 'Received: ', message, ' - Creating new task'
+    # If selected task type = 'regular'
+    # Choose random task and random item from data collection
+
+    session = createTaskSessionIntance(worker, task)
+
+    return createTaskInstance(task, session)
+
 
 @IdleInteractionHandler.interaction("TaskList")
 def taskList(worker, message, intent):
@@ -125,7 +147,7 @@ def selectTask(session, message, intent):
         task = tasks[index]
     else:
         return "Please choose a task from the list by indicating it's number. Say e.g. '1'"
-
+    
     worker = WorkerService.get(session['worker_id'])
 
     session.status = "DONE"
@@ -146,3 +168,38 @@ def newTask(worker, message, intent):
     session = createTaskSessionIntance(worker, task)
 
     return createTaskInstance(task, session)
+
+
+@IdleInteractionHandler.interaction("NewReviewTask")
+def newReviewTask(worker, message, intent):
+    print 'Received: ', message, ' - Creating new review task'
+    
+    sessions = SessionService.getAll()
+    
+    reviewed_session = None
+    for item in sessions:
+        if not item.validated and item.type == 'TASK' and item.worker_id != worker['id'] ):
+            reviewed_session = item
+            break
+
+    if not reviewed_session:
+        return "There are currently no tasks that need reviewing."            
+
+    task = TaskService.get(reviewed_session.task_id)
+    
+    reviewtask = TaskService.generate_reviewtask(reviewed_session, task)    
+    question = task['questions'][0]
+    answer = reviewed_session['answers'][0]['message']
+    
+    data_collection = DataService.get(task.data_collection_id)
+    task_data = data_collection.task_data.filter(_id=reviewtask.task_data_id).first()
+
+    if 'question_data_idx' in task['questions'][0]:
+        question_data = task_data.question_data[question['question_data_idx']].content
+        review = '{}\n  {}\n {}\n {}'.format(question['message'], question_data, 'Given answer:', answer)
+    else:
+        review = '{}\n {}\n {}'.format(question['message'], 'Given answer:' , answer)
+
+    session = createReviewSessionIntance(worker, reviewtask)
+
+    return review

@@ -24,7 +24,7 @@ class _InteractionRedirector:
         
         active_session = SessionService.findWhere(worker_id=worker['id'], status='ACTIVE').first()
 
-        if active_session and active_session['type'] == 'TASK':
+        if active_session and active_session['type'] in ['TASK', 'REVIEW']:
             return SessionInteractionHandler.handleInput(active_session, message)
         elif active_session and active_session['type'] == 'IDLE':
             return IdleInteractionHandler.handleInput(active_session, message)

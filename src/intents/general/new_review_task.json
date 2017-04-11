@@ -1,0 +1,31 @@
+{
+    "intent": "NewReviewTask",
+    "exact": [
+        "task"
+    ],
+    "required": [
+        {
+            "TaskKeyword": [
+                "task",
+                "job",
+                "assignment",
+                "exercise"
+            ]
+        },
+        {
+            "ReviewKeyword": [
+                "check",
+                "review"
+            ]
+        },
+        {
+            "TaskObtainVerb": [
+                "get",
+                "give",
+                "have",
+                "like",
+                "new"
+            ]
+        }
+    ]
+}

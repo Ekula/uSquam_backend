@@ -67,3 +67,9 @@ class TestIntentParser(unittest.TestCase):
         self.assertEqual(IntentParser.parse("1")['intent_type'], "Number")
         self.assertEqual(int(IntentParser.parse("1")['NumberKeyword']), 1)
         self.assertEqual(IntentParser.parse("20")['intent_type'], 'Answer')
+
+
+    def test_review_task(self):
+
+        self.assertEqual(IntentParser.parse("I would like to review a task")['intent_type'],
+            "NewReviewTask")

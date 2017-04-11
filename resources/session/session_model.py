@@ -13,14 +13,16 @@ SESSION_STATUS = [
 
 SESSION_TYPES = [
     'TASK',
-    'IDLE'
+    'IDLE',
+    'REVIEW'
 ]
 
 class Answer(EmbeddedDocument):
     _id                 = ObjectIdField(required=True, default=lambda: ObjectId() )
     message             = StringField(required=True)
     timestamp           = DateTimeField(default=datetime.datetime.now())
-    #question            = ObjectIdField(required=True)
+    validated_answer    = StringField()
+    #question           = ObjectIdField(required=True)
 
 
 class Session(Document):
@@ -30,4 +32,5 @@ class Session(Document):
     type                = StringField(default='TASK', choices=SESSION_TYPES)
     state               = IntField(default=0)
     answers             = EmbeddedDocumentListField(Answer)
+    validated           = BooleanField(default=False)
     status              = StringField(default='ACTIVE', choices=SESSION_STATUS)
