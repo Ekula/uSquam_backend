@@ -72,28 +72,3 @@ def selectTask(session, message, intent):
     new_session = createTaskSessionIntance(worker, task)
 
     return createTaskInstance(task, new_session)
-
-@IdleSessionHandler.interaction("Number")
-def selectTask(session, message, intent):
-
-    if not 'id' in session: 
-        return 'It seems like you havent listed the tasks first. \
- To select a tasks write "tasks". '
-
-    index = int(intent['NumberKeyword']) - 1
-    tasks = TaskService.getAll()
-
-    task = None
-    if index < len(tasks):
-        task = tasks[index]
-    else:
-        return "Please choose a task from the list by indicating it's number. Say e.g. '1'"
-    
-    worker = WorkerService.get(session['worker_id'])
-
-    session.status = "DONE"
-    SessionService.update(session)
-
-    new_session = createTaskSessionIntance(worker, task)
-
-    return createTaskInstance(task, new_session)
