@@ -48,28 +48,20 @@ def help(worker, message, intent):
     If you need help, just say "I need some help" or "I don't know what to do"
     """
 
-@IdleInteractionHandler.interaction("NewTask")
-def newTask(worker, message):
-    print 'Received: ', message, ' - Creating new task'
-    # If selected task type = 'regular'
-    # Choose random task and random item from data collection
-
-    session = createTaskSessionIntance(worker, task)
-
-    return createTaskInstance(task, session)
 
 
 @IdleInteractionHandler.interaction("TaskList")
 def taskList(worker, message, intent):
     tasks = TaskService.getAll()
-    task = TaskService.findWhere(name="Select Task")
 
     answer = "These are the tasks that are currently available: \
  \n\n{}\n\nWhich task would you like?".format("\n".join(["{}".format(task.name) for task in tasks]))
 
+    task = TaskService.findIdleTaskWhere(name="SelectTask")
+
     session = createIdleSessionInstance(worker, task)
 
-    return answer
+    return "\n".join([answer, task.states[0].question])
 
 @IdleInteractionHandler.interaction("NewTask")
 def newTask(worker, message, intent):

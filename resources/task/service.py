@@ -76,6 +76,10 @@ class Service:
 
         return Task.objects(**kwargs)
 
+    def findIdleTaskWhere(self, **kwargs):
+
+        return IdleTask.objects.get(**kwargs)
+
 TaskService = Service()
 
 ### Create some standard IdleTasks
