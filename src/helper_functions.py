@@ -36,6 +36,10 @@ def formatQuestion(task, session):
     else:
         answer = '{}'.format(question)
 
+    if task.coordinates is not None:
+        result['send_location'] = {'latitude': task['coordinates']['coordinates'][0],
+                                   'longitude': task['coordinates']['coordinates'][1]}
+
     # Check if there suggestions to be used as buttons in the chat application
     if 'suggestions' in task['questions'][state]:
         result['suggestions'] = task['questions'][state].suggestions

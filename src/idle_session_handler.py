@@ -44,6 +44,8 @@ class _IdleSessionHandler:
         intent = None
         if type(message) is dict and 'latitude' in message:
             intent = {'intent_type': 'Location'} # listNearbyTasks(session, message)
+        elif message.startswith('http'):
+            intent = 'Answer'
         else:
             intent = IntentParser.parse(message, intents)
         if not intent:
@@ -116,10 +118,13 @@ def listNearbyTasks(session, coords, intent):
     nearby_tasks = selectGPSTasks(coords)
 
     if len(nearby_tasks) > 0:
+        # Todo: Better would be to only cache ID of sessions
+        # Cache sessions so that the order is retained when selecting a tas later in SelectSituationalTask
         session.cache = {'nearby_tasks': nearby_tasks}
         SessionService.update(session)
         result = {'answer': "These are the tasks near you.  \n\n{}\n\nWhich task would you like?"
-            .format("\n".join(["{}. {} ({} km)".format(i+1, dis_task['task'].name, dis_task['distance']) for i, dis_task in enumerate(nearby_tasks)])),
+            .format("\n".join(["{}. {} ({} km)"
+              .format(i+1, dis_task['task'].name, dis_task['distance']) for i, dis_task in enumerate(nearby_tasks)])),
                   'suggestions': ['1', '2', '3', '4', '5', 'Cancel']}
     else:
         session.status = "STOPPED"
@@ -159,7 +164,7 @@ def selectGPSTasks(worker_coords):
             distance = calculateDistance(task_coords[0], task_coords[1],
                                          worker_coords['latitude'], worker_coords['longitude'])
             if distance <= 3:
-                suitableGPSTasks.append({'task': task, 'distance': distance})
+                suitableGPSTasks.append({'task': task, 'distance': round(distance, 1)})
 
     return suitableGPSTasks
 

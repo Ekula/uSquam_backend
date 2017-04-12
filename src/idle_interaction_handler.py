@@ -20,7 +20,12 @@ class _IdleInteractionHandler:
         return decorator
 
     def handleInput(self, worker, message):
-        intent = IntentParser.parse(message, self.handlers.keys())
+        intent = ''
+        if message.startswith('http'):
+            intent = 'Answer'
+        else:
+            intent = IntentParser.parse(message, self.handlers.keys())
+
         error_result = {'answer': "Sorry, I don't know what to say."}
         if not intent:
             return error_result
@@ -52,7 +57,8 @@ If you need help, just say "I need some help" or "I don't know what to do"
 
 @IdleInteractionHandler.interaction("TaskList")
 def taskList(worker, message, intent):
-    tasks = TaskService.getAll()
+    # Only use active, non-situational tasks
+    tasks = TaskService.findWhere(active=True, coordinates=None)
 
     answer = "These are the tasks that are currently available: \
  \n\n{}\n\nWhich task would you like?".format("\n".join(["{}. {}".format(i+1, task.name) for i, task in enumerate(tasks)]))

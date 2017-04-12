@@ -19,7 +19,12 @@ class _SessionInteractionHandler:
         return decorator
 
     def handleInput(self, session, message):
-        intent = IntentParser.parse(message, self.handlers.keys())
+        intent = ''
+        if message.startswith('http'):
+            intent = 'Answer'
+        else:
+            intent = IntentParser.parse(message, self.handlers.keys())
+
         handle_function = self.handlers.get(intent['intent_type'])
         if handle_function:
             return handle_function(session, message)
