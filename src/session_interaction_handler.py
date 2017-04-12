@@ -62,9 +62,9 @@ def reviewAnswer(reviewed_session, message):
 
         if 'question_data_idx' in task['questions'][0]:
             question_data = task_data.question_data[question['question_data_idx']].content
-            review = '{}\n  {}\n {}\n {}'.format(question['message'], question_data, 'Given answer:', original_answer)
+            review = '{}\n  **{}**\n {}\n **{}**'.format(question['message'], question_data, 'Given answer:', original_answer)
         else:
-            review = '{}\n {}\n {}'.format(question['message'], 'Given answer:' , original_answer)
+            review = '{}\n {}\n **{}**'.format(question['message'], 'Given answer:' , original_answer)
 
         reviewed_session.state = state
         
@@ -123,9 +123,9 @@ def newTask(session, message):
         requester.save()
         worker.save()
 
-        answer = 'Thanks! You earned {} credits (Total: {}). Do you have any feedback or comments?'.format(reward, worker['credits'])
+        answer = 'Thanks! You earned {} credits (Total: {}).'.format(reward, worker['credits'])
         result['answer'] = answer
-        session.status = "DONE" # Todo: FEEDBACK status?
+        session.status = "DONE" 
     
     SessionService.update(session)
     return result
