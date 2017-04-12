@@ -78,14 +78,14 @@ class Service:
 
     def findIdleTaskWhere(self, **kwargs):
 
-        return IdleTask.objects.get(**kwargs)
+        return IdleTask.objects(**kwargs)
 
 TaskService = Service()
 
 ### Create some standard IdleTasks
 try:
     # Replace before create
-    idle_task = TaskService.findIdleTaskWhere(name='SelectTask')
+    idle_task = TaskService.findIdleTaskWhere(name='SelectTask').first()
     if idle_task is not None:
         idle_task.delete()
 
@@ -107,15 +107,15 @@ except Exception:
 
 try:
     # Replace before create
-    idle_task = TaskService.findIdleTaskWhere(name='SituationalTask')
+    idle_task = TaskService.findIdleTaskWhere(name='SelectSituationalTask').first()
     if idle_task is not None:
         idle_task.delete()
 
     TaskService.createIdleTask({
-        "name": "SituationalTask",
+        "name": "SelectSituationalTask",
         "states": [
             {
-                "question": "Can you share your location with me?",
+                "question": "Please share your location so that I can find a nearby task",
                 "actions": {
                     "Location": "ListSituationalTasks",
                     "CancelTask": "CancelTask"
