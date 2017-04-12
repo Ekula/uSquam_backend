@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, ListField, ReferenceField, EmbeddedDocument, EmbeddedDocumentListField,\
-    BooleanField, IntField, DateTimeField, ObjectIdField
+    BooleanField, IntField, DateTimeField, ObjectIdField, DictField
 import datetime
 from bson.objectid import ObjectId
 
@@ -34,3 +34,4 @@ class Session(Document):
     answers             = EmbeddedDocumentListField(Answer)
     validated           = BooleanField(default=False)
     status              = StringField(default='ACTIVE', choices=SESSION_STATUS)
+    cache               = DictField()

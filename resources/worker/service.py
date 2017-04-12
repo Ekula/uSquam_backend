@@ -1,4 +1,4 @@
-from worker_model import Worker
+from worker_model import Worker, WorkerProperties
 
 class Service:
 
@@ -9,6 +9,7 @@ class Service:
 
         worker = Worker()
         worker.username = in_worker['username']
+        worker.properties = WorkerProperties()
         worker.save()
 
         return worker
