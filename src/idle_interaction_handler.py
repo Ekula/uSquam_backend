@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from resources.session.service import SessionService
 from resources.task.service import TaskService
 from resources.data.service import DataService
@@ -43,9 +45,18 @@ IdleInteractionHandler = _IdleInteractionHandler()
 @IdleInteractionHandler.interaction("Greetings")
 def help(worker, message, intent):
     return {'answer': """
-Hi! I am here to help you fulfill small commutation tasks 
-for a reward using the uSquam platform. Just let me know if you want a new task!
-"""}
+*task* - You can send me ‘_Give me a task_’ or something similar for a randomly selected task.
+
+*tasks* - You can send me ‘_Give me tasks_’ or something similar for a list of all available tasks. Then you will be able to select a task yourself.
+
+*review task* - You can send me ‘_I want a review task_’ or something similar to review the answer that have been submitted by someone else.
+
+*nearby task* - You can send me ‘_I want a nearby task_’ or something similar to perform a task that is located within a 3 km range of your current GPS location.
+
+*cancel* - You can send me ‘_I want to cancel my task_’ or something similar to stop the task you are working on.
+
+*help* - If you need any _help_, let me know!
+""", 'markdown': True}
 
 @IdleInteractionHandler.interaction("TaskList")
 def taskList(worker, message, intent):
@@ -65,7 +76,7 @@ def taskList(worker, message, intent):
 def newTask(worker, message, intent):
     print 'Received: ', message, ' - Creating new task'
     # Choose random task and random item from data collection
-    tasks = TaskService.getAll()
+    tasks = TaskService.findWhere(active=True, coordinates=None)
     task = random.choice(tasks)
 
     session = createTaskSessionIntance(worker, task)

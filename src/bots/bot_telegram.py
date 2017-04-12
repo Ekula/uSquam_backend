@@ -55,6 +55,7 @@ def message(bot, update):
         result = InteractionRedirector.onInput(update.message.from_user.id, ' ')
 
     reply_markup = None
+    parse_mode = None
 
     # Custom options for worker input (buttons, location, photo)
     if 'suggestions' in result:
@@ -66,14 +67,17 @@ def message(bot, update):
         reply_markup = ReplyKeyboardMarkup([[KeyboardButton("Send location", request_location=True),
                                            KeyboardButton("Cancel")]], one_time_keyboard=True)
     if 'send_location' in result:
-        # loc = Location(result['send_location']['latitude'], result['send_location']['longitude'])
         update.message.reply_location(latitude=result['send_location']['latitude'],
                                       longitude=result['send_location']['longitude'])
+
+    if 'markdown' in result:
+        parse_mode = 'Markdown'
 
     # Normal text
     update.message.reply_text(
         text=result['answer'],
-        reply_markup=reply_markup
+        reply_markup=reply_markup,
+        parse_mode=parse_mode,
     )
 
 def parseLocation(bot, update):
