@@ -30,11 +30,7 @@ class _IdleSessionHandler:
 
     def handleInput(self, session, message):
         print session['task_id']
-        task = TaskService.findIdleTaskWhere(id=session['task_id'])
-
-        # Check if message is a location (so uuuugly)
-        if type(message) is dict and 'latitude' in message:
-            return listNearbyTasks(session, message)
+        task = TaskService.findIdleTaskWhere(id=session['task_id']).first()
 
         intents = []
         state = task.states[session.state]
@@ -42,17 +38,31 @@ class _IdleSessionHandler:
             if action.intent not in intents:
                 intents.append(action.intent)
 
-        intent = IntentParser.parse(message, intents)
+        # Check if message is a location (so uuuugly)
+        intent = None
+        if type(message) is dict and 'latitude' in message:
+            intent = {'intent_type': 'Location'} # listNearbyTasks(session, message)
+        else:
+            intent = IntentParser.parse(message, intents)
         if not intent:
             return {'answer': "Sorry, I don't know what to say."}
         
         action = state.actions.filter(intent=intent['intent_type']).first()
         handle_function = self.actions.get(action.action)
 
+        reply = ""
         if handle_function:
-            return handle_function(session, message, intent)
+            reply =  handle_function(session, message, intent)
+            if session.status == "ACTIVE":
+                if session.state + 1 < len(task.states):
+                    session.state = session.state + 1
+                else:
+                    session.status = "DONE"
+                SessionService.update(session)
         else:
-            return {'answer': "Sorry, I don't know what to say."}
+            reply = {'answer': "Sorry, I don't know what to say."}
+
+        return reply
 
 IdleSessionHandler = _IdleSessionHandler()
 
@@ -70,8 +80,8 @@ def selectTask(session, message, intent):
     
     worker = WorkerService.get(session['worker_id'])
 
-    session.status = "DONE"
-    SessionService.update(session)
+    # session.status = "DONE"
+    # SessionService.update(session)
 
     new_session = createTaskSessionIntance(worker, task)
 
@@ -87,8 +97,10 @@ def cancelTask(session, message, intent):
 
     return {'answer': "Alright, putting this session on hold! If you need help, just send 'I need help'"}
 
-def listNearbyTasks(session, coords):
+@IdleSessionHandler.action("ListSituationalTasks")
+def listNearbyTasks(session, coords, intent):
     logging.info("Listing nearby tasks")
+    task = TaskService.findIdleTaskWhere(id=session['task_id']).first()
 
     # Todo: Update worker properties, something like
     # worker.properties.coordinates = [coords.longitude, coords.longitude]
@@ -99,7 +111,18 @@ def listNearbyTasks(session, coords):
 
 
     # Todo: If no tasks were found
+    # session.status = "STOPPED"
+    # SessionService.update(session)
+
+    return {'answer': 'These are the tasks near you. \n\n1. blabla\n\n{}'.format(task.states[session.state].question),
+        'suggestions': ['1', '2', '3', '4', '5', 'Cancel']
+    }
+
+@IdleSessionHandler.action("SelectSituationalTask")
+def selectSituationalTask(session, message, intent):
+    logging.info("Starting the chosen situational task")
+
     session.status = "STOPPED"
     SessionService.update(session)
 
-    return {'answer': 'No nearby tasks were found, sorry!'}
+    return {'answer': 'I could not select that task, not sure if this function is implemented yet'}

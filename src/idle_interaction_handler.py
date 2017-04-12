@@ -57,7 +57,7 @@ def taskList(worker, message, intent):
     answer = "These are the tasks that are currently available: \
  \n\n{}\n\nWhich task would you like?".format("\n".join(["{}. {}".format(i+1, task.name) for i, task in enumerate(tasks)]))
 
-    task = TaskService.findIdleTaskWhere(name="SelectTask")
+    task = TaskService.findIdleTaskWhere(name="SelectTask").first()
 
     session = createIdleSessionInstance(worker, task)
 
@@ -116,8 +116,7 @@ def taskList(worker, message, intent):
 
     # Todo: Check how long ago location was updated
 
-    task = TaskService.findIdleTaskWhere(name="SelectTask")
-
+    task = TaskService.findIdleTaskWhere(name="SelectSituationalTask").first()
     session = createIdleSessionInstance(worker, task)
 
-    return {'answer': "Please share your location so that I can find a nearby task", 'location': True}
+    return {'answer': task.states[0].question, 'location': True}
