@@ -32,7 +32,7 @@ def formatQuestion(task, session):
     # There could be no data item specified for this question
     if 'question_data_idx' in task['questions'][state]:
         question_data = task_data.question_data[task['questions'][state]['question_data_idx']].content
-        answer = '{}\n  {}'.format(question, question_data)
+        answer = '{}\n  **{}**'.format(question, question_data)
     else:
         answer = '{}'.format(question)
 

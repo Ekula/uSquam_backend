@@ -38,17 +38,9 @@ IdleInteractionHandler = _IdleInteractionHandler()
 @IdleInteractionHandler.interaction("Greetings")
 def help(worker, message, intent):
     return {'answer': """
-Hi, 
-
-I am usquam_bot and I am here to help you fulfill small commutation tasks \
-for a reward using the uSquam platform. Here's what I can do. 
-
-I can give you a new task. Just ask me to give you a new task and I will do so, \
-e.g. "Give me a task".
-
-If you need help, just say "I need some help" or "I don't know what to do"
+Hi! I am here to help you fulfill small commutation tasks 
+for a reward using the uSquam platform. Just let me know if you want a new task!
 """}
-
 
 @IdleInteractionHandler.interaction("TaskList")
 def taskList(worker, message, intent):
@@ -102,9 +94,10 @@ def newReviewTask(worker, message, intent):
 
     if 'question_data_idx' in task['questions'][0]:
         question_data = task_data.question_data[question['question_data_idx']].content
-        review = '{}\n  {}\n {}\n {}'.format(question['message'], question_data, 'Given answer:', answer)
+        
+        review = '{}\n  **{}**\n {}\n **{}**'.format(question['message'], question_data, 'Given answer:', answer)
     else:
-        review = '{}\n {}\n {}'.format(question['message'], 'Given answer:' , answer)
+        review = '{}\n {}\n **{}**'.format(question['message'], '**Given answer:**' , answer)
 
     session = createReviewSessionIntance(worker, reviewtask)
 
