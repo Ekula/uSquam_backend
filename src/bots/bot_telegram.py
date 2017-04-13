@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def start(bot, update):
     result = InteractionRedirector.onInput(update.message.from_user.id, 'hi')
-    update.message.reply_text(result['answer'])
+    update.message.reply_text(result['answer'], parse_mode='Markdown')
 
 def task(bot, update, args):
     result = InteractionRedirector.onInput(update.message.from_user.id, 'task')

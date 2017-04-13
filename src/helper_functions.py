@@ -31,7 +31,9 @@ def formatQuestion(task, session):
         question_data = task_data.question_data[task['questions'][state]['question_data_idx']]
         if question_data.type != 'IMAGE':
             result['markdown'] = True
-        answer = '{}\n  *{}*'.format(question, question_data.content)
+            answer = '{}\n  *{}*'.format(question, question_data.content)
+        else:
+            answer = '{}\n  {}'.format(question, question_data.content)
 
     else:
         answer = '{}'.format(question)

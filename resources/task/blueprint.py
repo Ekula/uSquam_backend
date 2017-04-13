@@ -23,7 +23,8 @@ class Task(Resource):
     def post(self):
         json_data = request.get_json(force=True)
         task = TaskService.insert(json_data)
+
         if task:
-            return None, 200
+            return jsonify(task)
         else:
             return None, 404

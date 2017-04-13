@@ -112,9 +112,9 @@ def newReviewTask(worker, message, intent):
     if 'question_data_idx' in task['questions'][0]:
         question_data = task_data.question_data[question['question_data_idx']].content
         
-        review = '{}\n  **{}**\n {}\n **{}**'.format(question['message'], question_data, 'Given answer:', answer)
+        review = '{}\n  {}\n {}\n {}'.format(question['message'], question_data, 'Given answer:', answer)
     else:
-        review = '{}\n {}\n **{}**'.format(question['message'], '**Given answer:**' , answer)
+        review = '{}\n {}\n {}'.format(question['message'], '**Given answer:**' , answer)
 
     session = createReviewSessionIntance(worker, reviewtask)
 
