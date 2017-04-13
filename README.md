@@ -12,21 +12,15 @@ are implemented:
 Just download the app and start a chat, it's super simple!
 
 ## Installation (for developers)
-The backend requires the [flask](http://flask.pocoo.org) framework to be installed which is
-a python library. 
+The backend of uSquam is written in Python 2. All requirements are located in the requirements.txt file, which can be installed using pip using the following command:
 
 ```shell
-$ pip install flask flask-restful
+$ pip install -r requirements.txt
 ```
 
 For testing you can either use ```nose``` which outputs just plain text or 
 [```green```](https://github.com/CleanCut/green) which 
 outputs beautifully colored code. You have to install either of those as well 
-
-```shell
-$ pip install nose
-$ pip install green
-```
 
 ## Testing (for developers)
 All methods that we write should be tested. There is a ```test``` folder. Its contents are 
@@ -132,11 +126,11 @@ body: {
 			"message": "string",
 			"expected_type": "TEXT/NUMBER/DATE/...",
 			"suggestions": ["<string>"],
-			"question_data_idx": <number, optional>
+			"question_data_idx": "<number, optional>"
 		}
 	],
-	"time_indication": <number>,
-	"reward": <number>,
-	"active": <boolean>
+	"time_indication": "<number>",
+	"reward": "<number>",
+	"active": "<boolean>"
 }
 ```
