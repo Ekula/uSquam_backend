@@ -38,7 +38,7 @@ def formatQuestion(task, session):
     else:
         answer = '{}'.format(question)
 
-    if task.coordinates is not None:
+    if state == 0 and task.coordinates is not None:
         result['send_location'] = {'latitude': task['coordinates']['coordinates'][0],
                                    'longitude': task['coordinates']['coordinates'][1]}
 
