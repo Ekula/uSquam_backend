@@ -28,7 +28,6 @@ class Task(Document):
     data_collection_id  = ObjectIdField()
     questions           = EmbeddedDocumentListField(Question)
     time_indication     = FloatField(required=True)
-    gps_based           = BooleanField(default=False)
     reward              = FloatField(required=True)
     active              = BooleanField(default=False)
     date_modified       = DateTimeField(default=datetime.datetime.now)

@@ -15,7 +15,7 @@ class SlackBot(threading.Thread):
 
     def handleMessage(self, user_id, message):
         result = InteractionRedirector.onInput(user_id, message)
-        return result
+        return result['answer']
         
     def handleStream(self, stream):
         

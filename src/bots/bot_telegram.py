@@ -1,5 +1,5 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler
-from telegram import ReplyKeyboardMarkup, KeyboardButton
+from telegram import ReplyKeyboardMarkup, KeyboardButton, Location
 from utils.secrets import TELEGRAM_KEY
 from src.interaction_redirector import InteractionRedirector
 from flask import request, jsonify, json
@@ -14,8 +14,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 def start(bot, update):
-    result = InteractionRedirector.onInput(update.message.from_user.id, 'start')
-    update.message.reply_text(result)
+    result = InteractionRedirector.onInput(update.message.from_user.id, 'hi')
+    update.message.reply_text(result['answer'], parse_mode='Markdown')
 
 def task(bot, update, args):
     result = InteractionRedirector.onInput(update.message.from_user.id, 'task')
@@ -47,27 +47,38 @@ def message(bot, update):
     elif update.message.location is not None:
         geo_loc = {'latitude': update.message.location.latitude, 'longitude': update.message.location.longitude}
         result = InteractionRedirector.onInput(update.message.from_user.id, geo_loc)
-    elif update.message.photo is not None and len(message.text.photo) > 0:
-        result = InteractionRedirector.onInput(update.message.from_user.id, update.message.photo)
+    elif update.message.photo is not None and len(update.message.photo) > 0:
+        last_photo = update.message.photo[-1]
+        result = InteractionRedirector.onInput(update.message.from_user.id, last_photo.file_id)
     else:
         # Error: Input type is not recognized, send an empty string
         result = InteractionRedirector.onInput(update.message.from_user.id, ' ')
+
+    reply_markup = None
+    parse_mode = None
 
     # Custom options for worker input (buttons, location, photo)
     if 'suggestions' in result:
         buttons = []
         for suggestion in result['suggestions']:
             buttons.append(KeyboardButton(suggestion))
-        update.message.reply_text(
-            text=result['answer'],
-            reply_markup=ReplyKeyboardMarkup([buttons], one_time_keyboard=True))
-    elif 'location' in result and result['location'] is True:
-        update.message.reply_text(text=result['answer'], reply_markup=ReplyKeyboardMarkup([
-            [KeyboardButton("Send location", request_location=True), KeyboardButton("Cancel")]],
-            one_time_keyboard=True))
-    else:
-        # Normal text
-        update.message.reply_text(text=result['answer'])
+        reply_markup = ReplyKeyboardMarkup([buttons], one_time_keyboard=True)
+    if 'location' in result and result['location'] is True:
+        reply_markup = ReplyKeyboardMarkup([[KeyboardButton("Send location", request_location=True),
+                                           KeyboardButton("Cancel")]], one_time_keyboard=True)
+    if 'send_location' in result:
+        update.message.reply_location(latitude=result['send_location']['latitude'],
+                                      longitude=result['send_location']['longitude'])
+
+    if 'markdown' in result:
+        parse_mode = 'Markdown'
+
+    # Normal text
+    update.message.reply_text(
+        text=result['answer'],
+        reply_markup=reply_markup,
+        parse_mode=parse_mode,
+    )
 
 def parseLocation(bot, update):
     latitude = update.message.location.latitude
@@ -111,8 +122,8 @@ def start_telegram_bot():
     print 'Get the updater'
     updater = Updater(TELEGRAM_KEY)
     updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(CommandHandler('task', task, pass_args=True,))
-    updater.dispatcher.add_handler(CommandHandler('tasks', tasks))
+    # updater.dispatcher.add_handler(CommandHandler('task', task, pass_args=True,))
+    # updater.dispatcher.add_handler(CommandHandler('tasks', tasks))
     updater.dispatcher.add_handler(MessageHandler(None, message))
     updater.dispatcher.add_error_handler(error)
     return updater

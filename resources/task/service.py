@@ -31,9 +31,11 @@ class Service:
         task.requester_id = in_task['requester_id']
         task.time_indication = in_task['time_indication']
         task.reward = in_task['reward']
-        task.gpsbased = in_task['gps_based']
         task.data_collection_id = in_task['data_collection_id']
-        
+
+        if 'coordinates' in in_task:
+            task.coordinates = in_task['coordinates']
+
         if 'active' in in_task:
             task.active = in_task['active']
               

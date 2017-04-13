@@ -26,15 +26,21 @@ def formatQuestion(task, session):
             task_data = item
             break
 
-    # Todo: Not inserting link into message, but actually sending it as media along with a text message
-    # (if it's an image)
-
     # There could be no data item specified for this question
     if 'question_data_idx' in task['questions'][state]:
-        question_data = task_data.question_data[task['questions'][state]['question_data_idx']].content
-        answer = '{}\n  **{}**'.format(question, question_data)
+        question_data = task_data.question_data[task['questions'][state]['question_data_idx']]
+        if question_data.type != 'IMAGE':
+            result['markdown'] = True
+            answer = '{}\n  *{}*'.format(question, question_data.content)
+        else:
+            answer = '{}\n  {}'.format(question, question_data.content)
+
     else:
         answer = '{}'.format(question)
+
+    if state == 0 and task.coordinates is not None:
+        result['send_location'] = {'latitude': task['coordinates']['coordinates'][0],
+                                   'longitude': task['coordinates']['coordinates'][1]}
 
     # Check if there suggestions to be used as buttons in the chat application
     if 'suggestions' in task['questions'][state]:

@@ -7,6 +7,8 @@ from intent import IntentParser
 from src.helper_functions import *
 import random
 import logging
+import datetime
+from math import sin, cos, sqrt, atan2, radians
 
 
 class _IdleSessionHandler:
@@ -42,6 +44,8 @@ class _IdleSessionHandler:
         intent = None
         if type(message) is dict and 'latitude' in message:
             intent = {'intent_type': 'Location'} # listNearbyTasks(session, message)
+        elif message.startswith('http'):
+            intent = 'Answer'
         else:
             intent = IntentParser.parse(message, intents)
         if not intent:
@@ -52,7 +56,7 @@ class _IdleSessionHandler:
 
         reply = ""
         if handle_function:
-            reply =  handle_function(session, message, intent)
+            reply = handle_function(session, message, intent)
             if session.status == "ACTIVE":
                 if session.state + 1 < len(task.states):
                     session.state = session.state + 1
@@ -102,27 +106,82 @@ def listNearbyTasks(session, coords, intent):
     logging.info("Listing nearby tasks")
     task = TaskService.findIdleTaskWhere(id=session['task_id']).first()
 
-    # Todo: Update worker properties, something like
-    # worker.properties.coordinates = [coords.longitude, coords.longitude]
-    # worker.properties.coordinates_updated = datetime.datetime.now
+    print coords
 
-    # Todo: Find nearby tasks
-    # ...
+    # Update worker properties
+    worker = WorkerService.get(session['worker_id'])
+    worker.coordinates = [coords['latitude'], coords['longitude']]
+    worker.coordinates_updated = datetime.datetime.now
 
+    result = {}
+    # Find nearby tasks
+    nearby_tasks = selectGPSTasks(coords)
 
-    # Todo: If no tasks were found
-    # session.status = "STOPPED"
-    # SessionService.update(session)
+    if len(nearby_tasks) > 0:
+        # Todo: Better would be to only cache ID of sessions
+        # Cache sessions so that the order is retained when selecting a tas later in SelectSituationalTask
+        session.cache = {'nearby_tasks': nearby_tasks}
+        SessionService.update(session)
+        result = {'answer': "These are the tasks near you.  \n\n{}\n\nWhich task would you like?"
+            .format("\n".join(["{}. {} ({} km)"
+              .format(i+1, dis_task['task'].name, dis_task['distance']) for i, dis_task in enumerate(nearby_tasks)])),
+                  'suggestions': ['1', '2', '3', '4', '5', 'Cancel']}
+    else:
+        session.status = "STOPPED"
+        SessionService.update(session)
+        result = {'answer': 'Sorry, no nearby tasks were found!'}
 
-    return {'answer': 'These are the tasks near you. \n\n1. blabla\n\n{}'.format(task.states[session.state].question),
-        'suggestions': ['1', '2', '3', '4', '5', 'Cancel']
-    }
+    return result
+
 
 @IdleSessionHandler.action("SelectSituationalTask")
 def selectSituationalTask(session, message, intent):
     logging.info("Starting the chosen situational task")
+    index = int(intent['NumberKeyword']) - 1
+    nearby_tasks = session.cache['nearby_tasks']
 
-    session.status = "STOPPED"
-    SessionService.update(session)
+    task = None
+    if index < len(nearby_tasks):
+        task = nearby_tasks[index]['task']
+    else:
+        return {'answer': "Please choose a task from the list by indicating it's number. Say e.g. '1'"}
 
-    return {'answer': 'I could not select that task, not sure if this function is implemented yet'}
+    worker = WorkerService.get(session['worker_id'])
+
+    new_session = createTaskSessionIntance(worker, task)
+
+    return formatQuestion(task, new_session)
+
+
+def selectGPSTasks(worker_coords):
+    tasks = TaskService.getAll()
+    suitableGPSTasks = []
+
+    for task in tasks:
+        task_coords = task.coordinates
+        if task_coords is not None:
+            task_coords = task_coords['coordinates']
+            distance = calculateDistance(task_coords[0], task_coords[1],
+                                         worker_coords['latitude'], worker_coords['longitude'])
+            if distance <= 3:
+                suitableGPSTasks.append({'task': task, 'distance': round(distance, 1)})
+
+    return suitableGPSTasks
+
+def calculateDistance(lat1, lon1, lat2, lon2):
+    R = 6373.0
+
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+    lat2 = radians(lat2)
+    lon2 = radians(lon2)
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+
+    return distance

@@ -19,7 +19,12 @@ class _SessionInteractionHandler:
         return decorator
 
     def handleInput(self, session, message):
-        intent = IntentParser.parse(message, self.handlers.keys())
+        intent = ''
+        if message.startswith('http'):
+            intent = 'Answer'
+        else:
+            intent = IntentParser.parse(message, self.handlers.keys())
+
         handle_function = self.handlers.get(intent['intent_type'])
         if handle_function:
             return handle_function(session, message)
@@ -55,11 +60,11 @@ def reviewAnswer(reviewed_session, message):
         data_collection = DataService.get(original_task.data_collection_id)
         task_data = data_collection.task_data.filter(_id=task.task_data_id).first()
 
-        if 'question_data_idx' in task['questions'][0]:
+        if 'question_data_idx' in task['questions'][state]:
             question_data = task_data.question_data[question['question_data_idx']].content
-            review = '{}\n  **{}**\n {}\n **{}**'.format(question['message'], question_data, 'Given answer:', original_answer)
+            review = '{}\n  {}\n {}\n {}'.format(question['message'], question_data, 'Given answer:', original_answer)
         else:
-            review = '{}\n {}\n **{}**'.format(question['message'], 'Given answer:' , original_answer)
+            review = '{}\n {}\n {}'.format(question['message'], 'Given answer:' , original_answer)
 
         reviewed_session.state = state
         
